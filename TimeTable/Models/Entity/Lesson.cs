@@ -1,11 +1,13 @@
-﻿namespace TimeTable.Models.Entity
+﻿using System;
+
+namespace TimeTable.Models.Entity
 {
     public class Lesson
     {
-        public int Id { get; set; }
-        public int SubjectId { get; set; }
-        public int UserId { get; set; }
-        public int MarkId { get; set; }
+        public Guid Id { get; set; }
+        public Guid SubjectId { get; set; }
+        public Guid UserId { get; set; }
+        public Guid MarkId { get; set; }
         public DateTime StartTime { get; set; }
         public DateTime EndTime { get; set; }
     }

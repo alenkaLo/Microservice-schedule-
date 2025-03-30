@@ -5,7 +5,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-builder.Services.AddDbContext<ApiContext>(options => options.UseInMemoryDatabase("TimetableDb"));
+builder.Services.AddDbContext<LessonDbContext>(options => options.UseInMemoryDatabase("TimetableDb"));
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

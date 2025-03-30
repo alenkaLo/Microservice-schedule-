@@ -11,9 +11,9 @@ namespace TimeTable.Controllers
     [ApiController]
     public class LessonController : ControllerBase
     {
-        private readonly ApiContext _context;
+        private readonly LessonDbContext _context;
 
-        public LessonController(ApiContext context)
+        public LessonController(LessonDbContext context)
         {
             _context = context;
         }
