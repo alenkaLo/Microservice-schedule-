@@ -1,13 +1,17 @@
 using Microsoft.EntityFrameworkCore;
 using TimeTable.Data;
+using TimeTable.Models.Repository;
+using TimeTable.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
 
-builder.Services.AddDbContext<ApiContext>(options => options.UseInMemoryDatabase("TimetableDb"));
+// Add services to the container.
+builder.Services.AddDbContext<LessonDbContext>(options => options.UseInMemoryDatabase("LessonDb"));
 
 builder.Services.AddControllers();
+builder.Services.AddScoped<ILessonService, LessonService>();
+builder.Services.AddScoped<ILessonRepository, LessonRepository>();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();

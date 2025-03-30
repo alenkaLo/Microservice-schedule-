@@ -4,36 +4,40 @@ using TimeTable.Models;
 using TimeTable.Data;
 using TimeTable.Models.Entity;
 using System.Data;
+using TimeTable.Models.Repository;
+using TimeTable.Services;
 
 namespace TimeTable.Controllers
 {
     [Route("api/[controller]/[action]")]
     [ApiController]
     public class LessonController : ControllerBase
-    {
-        private readonly ApiContext _context;
-
-        public LessonController(ApiContext context)
+    {   
+        private readonly ILessonService _lessonService;
+        public LessonController(ILessonService lessonService)
         {
-            _context = context;
+            _lessonService = lessonService;
         }
 
 
         [HttpGet]
         public JsonResult GetAll()
         {
-            var result = _context.Lessons.ToList();
+            
+            var result = _lessonService.GetAllLessons();
 
             if (result == null)
+            {
                 return new JsonResult(NotFound());
+            }
 
             return new JsonResult(Ok(result));
         }
 
         [HttpGet]
-        public JsonResult GetById(int id)
+        public JsonResult GetById(Guid id)
         {
-            var result = _context.Lessons.Find(id);
+            var result = _lessonService.GetLessonById(id);
 
             if (result == null)
                 return new JsonResult(NotFound());
@@ -45,9 +49,7 @@ namespace TimeTable.Controllers
         [HttpPost]
         public JsonResult Create(Lesson lesson)
         { 
-            _context.Lessons.Add(lesson);
-
-            _context.SaveChanges();
+            _lessonService.Add(lesson);
             return new JsonResult(Ok());
         }
          
