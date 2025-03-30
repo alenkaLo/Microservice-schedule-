@@ -1,0 +1,212 @@
+openapi: 3.0.4
+info:
+  title: Расписание
+  description: 
+    Сервис Расписания.
+  version: 0.1.0
+servers:
+  - url: toDo
+tags:
+  - name: Расписание
+    description: Получение расписания
+  - name: Уроки
+    description: Редактирование уроков
+paths:
+  /schedule:
+    get:
+      tags:
+        - Расписание
+      summary: Получение сводного расписания.
+      description: Получение сводного расписания на текущую неделю.
+      parameters:
+        - name: period
+          in: query
+          required: true
+          schema:
+            $ref: '#/components/schemas/period'
+      responses: 
+        "400": 
+          description: bad request
+        "200": 
+          description: Сводное расписание на неделю.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/schedule'
+                
+  /schedule/user:
+    get:
+      tags:
+        - Расписание
+      summary: Получение расписания пользователя.
+      description: Получение расписания пользователя за выбранный период.
+      parameters:
+        - name: id
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: period
+          in: query
+          required: true
+          schema:
+            $ref: '#/components/schemas/period'
+      responses:
+        "200": 
+          description: Сводное расписание на неделю.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/schedule'
+        "400": 
+          description: bad request
+        '404':
+          description: расписание не найдено
+          
+  /lesson:
+    post:
+      tags:
+        - Уроки
+      summary: Добавить урок.
+      parameters:
+        - name: Данные урока.
+          in: query
+          required: true
+          schema:
+            $ref: "#/components/schemas/lesson"
+      responses:
+        "200": 
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/lessonCreate'
+    delete:
+      tags:
+        - Уроки
+      summary: Удалить урок.
+      parameters:
+        - name: id
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+        '404':
+          description: урок не найден
+          
+    put:
+      tags:
+        - Уроки
+      summary: Изменить урок.
+      parameters:
+        - name: Данные урока.
+          in: query
+          required: true
+          schema:
+            $ref: "#/components/schemas/lessonUpd"
+      responses:
+        "200": 
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/lessonCreate'
+        '404':
+          description: урок не найден
+                
+  /mark:
+    post:
+      tags:
+        - Оценки
+      summary: Выставить оценку.
+      parameters:
+        - name: Данные оценки.
+          in: query
+          required: true
+          schema:
+            $ref: "#/components/schemas/mark"
+      responses:
+        '200':
+          description: OK
+        
+components:
+  schemas:
+    subject:
+      type: object
+      properties:
+        name:
+          type: string
+          
+    lesson:
+      type: object
+      properties:
+        subject:
+          $ref: '#/components/schemas/subject'
+        startTime: 
+          type: string
+        endTime: 
+          type: string
+        user:
+          type: array
+          items:
+            type: string
+        task:
+          type: string
+        
+    schedule:
+      type: object
+      properties:
+        lessons:
+          type: array
+          items:
+            type: object
+            $ref: '#/components/schemas/lesson'
+          
+    period:
+      type: object
+      properties:
+        startTime: 
+          type: string
+        endTime: 
+          type: string
+        
+    lessonCreate:
+      type: object
+      properties:
+        id:
+          type: string
+          
+    lessonUpd:
+      type: object
+      properties:
+        id:
+          type: string
+        subject:
+          $ref: '#/components/schemas/subject'
+        startTime: 
+          type: string
+        endTime: 
+          type: string
+        user:
+          type: array
+          items:
+            type: string
+        task:
+          type: string
+        
+    mark:
+      type: object
+      properties:
+        userid:
+          type: string
+        lessonid:
+          type: string
+        mark:
+          type: string
+          
+          
+          
+          
