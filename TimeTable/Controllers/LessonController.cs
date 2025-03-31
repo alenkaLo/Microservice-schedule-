@@ -52,6 +52,23 @@ namespace TimeTable.Controllers
             _lessonService.Add(lesson);
             return new JsonResult(Ok());
         }
-         
+        [HttpPut("{id:guid}")]
+        public JsonResult Update(Guid id, Guid subjectId, Guid userId, Guid markId, DateTime startTime, DateTime endtime)
+        {
+            var result = _lessonService.Update(id, subjectId, userId, markId, startTime, endtime);
+            if (result == null)
+                return new JsonResult(NotFound());
+
+            return new JsonResult(Ok(result));
+        }
+        [HttpDelete("{id:guid}")]
+        public JsonResult Delete(Guid id)
+        {
+            var result =_lessonService.Delete(id);
+            if (result == null)
+                return new JsonResult(NotFound());
+
+            return new JsonResult(Ok(result));
+        }
     }
 }
