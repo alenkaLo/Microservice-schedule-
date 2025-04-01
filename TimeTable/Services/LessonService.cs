@@ -36,5 +36,9 @@ namespace TimeTable.Services
         {
             return await _lessonRepository.Update(id, subjectId, userId, markId, startTime, endtime);
         }
+        public async Task GiveMark(Guid subjectId, Guid userId, int Mark)
+        {
+            await Task.Delay(0);
+        }
     }
 }
