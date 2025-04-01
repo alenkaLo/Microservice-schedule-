@@ -9,5 +9,6 @@ namespace TimeTable.Models.Repository
         Task<Guid> Add(Lesson lesson);
         Task<Guid> Delete(Guid id);
         Task<Guid> Update(Guid id, Guid subjectId, Guid userId, DateTime startTime, DateTime endtime);
+        Task<List<Lesson>> GetUserLessons(Guid userid);
     }
 }

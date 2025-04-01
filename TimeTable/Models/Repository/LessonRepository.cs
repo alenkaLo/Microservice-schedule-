@@ -57,5 +57,13 @@ namespace TimeTable.Models.Repository
                 .SetProperty(x => x.EndTime, x => endtime));
             return id;
         }
+
+        public async Task<List<Lesson>> GetUserLessons(Guid userid)
+        {
+            return await _dbContext.Lessons
+            .Where(x => x.UserId == userid)
+            .AsNoTracking()
+            .ToListAsync();
+        }
     }
 }

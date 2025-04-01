@@ -36,5 +36,10 @@ namespace TimeTable.Services
         {
             return await _lessonRepository.Update(id, subjectId, userId, startTime, endtime);
         }
+
+        public async Task<List<Lesson>> GetUserSchedule(Guid id)
+        {
+            return await _lessonRepository.GetUserLessons(id);
+        }
     }
 }
