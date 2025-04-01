@@ -10,6 +10,7 @@
  - Запустить Docker Desktop (окно можно закрыть, главное - чтобы он был на фоне): `start "C:\Program Files\Docker\Docker\Docker Desktop.exe"`
  - Инициализировать user-secrets: `dotnet user-secrets init -p .\TimeTable\TimeTable.csproj`
  - Задать пароль для SSL-сертификата: `dotnet user-secrets -p TimeTable\TimeTable.csproj set "Kestrel:Certificates:Default:Password" "Pass1234"`
+ - Создать папку для сертификата (костыль) `mkdir ${env:USERPROFILE}/.aspnet` `mkdir ${env:USERPROFILE}/.aspnet/https`
  - Добавить сертификат: `dotnet dev-certs https -ep "${env:USERPROFILE}\.aspnet\https\aspnetapp.pfx" --trust -p "Pass1234"`
  - Запустить контейнер: `docker compose up`
 
