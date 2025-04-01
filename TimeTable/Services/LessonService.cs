@@ -32,9 +32,14 @@ namespace TimeTable.Services
         {
             return await _lessonRepository.Delete(id);
         }
-        public async Task<Guid> Update(Guid id, Guid subjectId, Guid userId, Guid markId, DateTime startTime, DateTime endtime)
+        public async Task<Guid> Update(Guid id, Guid subjectId, Guid userId, DateTime startTime, DateTime endtime)
         {
-            return await _lessonRepository.Update(id, subjectId, userId, markId, startTime, endtime);
+            return await _lessonRepository.Update(id, subjectId, userId, startTime, endtime);
+        }
+
+        public async Task<List<Lesson>> GetUserSchedule(Guid id)
+        {
+            return await _lessonRepository.GetUserLessons(id);
         }
     }
 }
