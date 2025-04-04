@@ -48,6 +48,12 @@ paths:
           required: true
           schema:
             type: string
+        - name: type
+          description: класс - 1 или учитель - 0.
+          in: query
+          required: true
+          schema:
+            type: boolean 
         - name: period
           in: query
           required: true
@@ -79,6 +85,16 @@ paths:
           required: true
           schema:
             $ref: "#/components/schemas/lesson"
+        - name: Повторять
+          description: 1 - повторять, 0 - не повторять
+          in: query
+          required: true
+          schema:
+            type: boolean
+        - name: Конец повторов.
+          in: query
+          schema:
+            type: string
       responses:
         "200": 
           description: урок сохранен
@@ -215,6 +231,8 @@ components:
     mark:
       type: object
       properties:
+        Date: 
+          type: string
         teacherId:
           type: string
         userid:
