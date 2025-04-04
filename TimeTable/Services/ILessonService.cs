@@ -10,5 +10,6 @@ namespace TimeTable.Services
         Task<Guid> Delete(Guid id);
         Task<Guid> Update(Guid id, Guid subjectId, Guid userId, Guid markId, DateTime startTime, DateTime endtime);
         Task GiveMark(Guid subjectId, Guid userId, int Mark);
+
     }
 }

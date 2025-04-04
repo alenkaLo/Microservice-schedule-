@@ -9,7 +9,7 @@ using TimeTable.Services;
 
 namespace TimeTable.Controllers
 {
-    [Route("api/[controller]/[action]")]
+    [Route("api/[controller]")]
     [ApiController]
     public class LessonController : ControllerBase
     {   
@@ -19,25 +19,21 @@ namespace TimeTable.Controllers
             _lessonService = lessonService;
         }
 
-
-        [HttpGet]
-        public JsonResult GetAll()
+        [HttpGet("{id:guid}")]
+        public JsonResult GetById(Guid id)
         {
-            
-            var result = _lessonService.GetAllLessons();
+            var result = _lessonService.GetLessonById(id);
 
             if (result == null)
-            {
                 return new JsonResult(NotFound());
-            }
 
             return new JsonResult(Ok(result));
         }
 
         [HttpGet]
-        public JsonResult GetById(Guid id)
+        public JsonResult GetAll(Guid id)
         {
-            var result = _lessonService.GetLessonById(id);
+            var result = _lessonService.GetAllLessons();
 
             if (result == null)
                 return new JsonResult(NotFound());
@@ -61,7 +57,7 @@ namespace TimeTable.Controllers
         [HttpPut("{id:guid}")]
         public JsonResult Update(Guid id, Guid subjectId, Guid userId, Guid markId, DateTime startTime, DateTime endtime)
         {
-            var result = _lessonService.Update(id, subjectId, userId, markId, startTime, endtime);
+            var result = _lessonService.Update(id, subjectId, userId, startTime, endtime);
             if (result == null)
                 return new JsonResult(NotFound());
 

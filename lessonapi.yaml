@@ -17,7 +17,7 @@ paths:
       tags:
         - Расписание
       summary: Получение сводного расписания.
-      description: Получение сводного расписания на текущую неделю.
+      description: Получение сводного расписания за выбранный период.
       parameters:
         - name: period
           in: query
@@ -25,14 +25,16 @@ paths:
           schema:
             $ref: '#/components/schemas/period'
       responses: 
-        "400": 
-          description: bad request
         "200": 
           description: Сводное расписание на неделю.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/schedule'
+        "400": 
+          description: неверные параметры запроса
+        '412':
+          description: начало урока позже конца
                 
   /schedule/user:
     get:
@@ -59,9 +61,12 @@ paths:
               schema:
                 $ref: '#/components/schemas/schedule'
         "400": 
-          description: bad request
+          description: неверные параметры запроса
         '404':
           description: расписание не найдено
+        '412':
+          description: начало урока позже конца
+          
           
   /lesson:
     post:
@@ -76,7 +81,7 @@ paths:
             $ref: "#/components/schemas/lesson"
       responses:
         "200": 
-          description: OK
+          description: урок сохранен
           content:
             application/json:
               schema:
@@ -93,9 +98,12 @@ paths:
             type: string
       responses:
         '200':
-          description: OK
+          description: урок удален
+        "400": 
+          description: неверные параметры запроса
         '404':
           description: урок не найден
+        
           
     put:
       tags:
@@ -109,11 +117,13 @@ paths:
             $ref: "#/components/schemas/lessonUpd"
       responses:
         "200": 
-          description: OK
+          description: изменения сохранены
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/lessonCreate'
+        "400": 
+          description: неверные параметры запроса
         '404':
           description: урок не найден
                 
@@ -130,7 +140,12 @@ paths:
             $ref: "#/components/schemas/mark"
       responses:
         '200':
-          description: OK
+          description: оценка выставлена
+        "400": 
+          description: неверные параметры запроса
+        '412':
+          description: учитель не имеет право высталять оценки за этот предмет
+        
         
 components:
   schemas:
@@ -149,10 +164,10 @@ components:
           type: string
         endTime: 
           type: string
-        user:
-          type: array
-          items:
-            type: string
+        className:
+          type: string
+        teacherId:
+          type: string
         task:
           type: string
         
@@ -190,23 +205,21 @@ components:
           type: string
         endTime: 
           type: string
-        user:
-          type: array
-          items:
-            type: string
+        className:
+          type: string
+        teacherId:
+          type: string
         task:
           type: string
         
     mark:
       type: object
       properties:
+        teacherId:
+          type: string
         userid:
           type: string
         lessonid:
           type: string
         mark:
           type: string
-          
-          
-          
-          
