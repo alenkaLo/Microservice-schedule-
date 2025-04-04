@@ -41,5 +41,9 @@ namespace TimeTable.Services
         {
             return await _lessonRepository.GetUserLessons(id);
         }
+        public async Task GiveMark(Guid subjectId, Guid userId, int Mark)
+        {
+            await Task.Delay(0);
+        }
     }
 }

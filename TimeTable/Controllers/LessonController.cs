@@ -48,6 +48,12 @@ namespace TimeTable.Controllers
             _lessonService.Add(lesson);
             return new JsonResult(Ok());
         }
+        [HttpPost]
+        public JsonResult GiveMark(Guid subjectId, Guid userId, int markId)
+        {
+            _lessonService.GiveMark(subjectId,userId,markId);
+            return new JsonResult(Ok());
+        }
         [HttpPut("{id:guid}")]
         public JsonResult Update(Guid id, Guid subjectId, Guid userId, Guid markId, DateTime startTime, DateTime endtime)
         {
