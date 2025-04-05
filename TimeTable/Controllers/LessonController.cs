@@ -62,9 +62,9 @@ namespace TimeTable.Controllers
             return new JsonResult(Ok());
         }
         [HttpPut("{id:guid}")]
-        public JsonResult Update(Guid id, Guid subjectId, Guid userId, Guid markId, DateTime startTime, DateTime endtime)
+        public JsonResult Update(Guid id, Guid subjectId, Guid userId, string className, Guid taskId, DateTime startTime, DateTime endtime)
         {
-            var result = _lessonService.Update(id, subjectId, userId, startTime, endtime);
+            var result = _lessonService.Update(id, subjectId, userId, className, taskId, startTime, endtime);
             if (result == null)
                 return new JsonResult(NotFound());
 

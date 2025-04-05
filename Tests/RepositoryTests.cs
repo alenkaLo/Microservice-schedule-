@@ -3,7 +3,6 @@ using Microsoft.Data.Sqlite;
 using TimeTable.Data;
 using TimeTable.Models.Entity;
 using TimeTable.Models.Repository;
-using static Microsoft.ApplicationInsights.MetricDimensionNames.TelemetryContext;
 
 namespace RepositoryTests
 {
@@ -18,21 +17,28 @@ namespace RepositoryTests
         [TestInitialize]
         public void Initialize()
         {
-            // Создаем и открываем соединение SQLite in-memory
             _connection = new SqliteConnection("DataSource=:memory:");
             _connection.Open();
 
-            // Настраиваем DbContext с использованием SQLite
+            using (var command = _connection.CreateCommand())
+            {
+                command.CommandText = "PRAGMA foreign_keys = OFF;";
+                command.ExecuteNonQuery();
+            }
+
             _options = new DbContextOptionsBuilder<LessonDbContext>()
                 .UseSqlite(_connection)
                 .Options;
 
             _context = new LessonDbContext(_options);
-            _context.Database.EnsureCreated(); // Создаем базу данных
+            _context.Database.EnsureCreated();
+
+            var lessons = TestData();
+
+            _context.Lessons.AddRange(lessons);
+            _context.SaveChanges();
 
             _repository = new LessonRepository(_context);
-
-            SeedTestData();
         }
 
         [TestCleanup]
@@ -42,7 +48,7 @@ namespace RepositoryTests
         }
 
 
-        private async Task SeedTestData()
+        private Lesson[] TestData()
         {
             var testLessons = new[]
             {
@@ -51,7 +57,8 @@ namespace RepositoryTests
                     Id = Guid.NewGuid(),
                     SubjectId = Guid.NewGuid(),
                     UserId = Guid.NewGuid(),
-                    MarkId = Guid.NewGuid(),
+                    ClassName = default,
+                    TaskID = Guid.NewGuid(),
                     StartTime = DateTime.Now.AddHours(1),
                     EndTime = DateTime.Now.AddHours(2)
                 },
@@ -60,7 +67,8 @@ namespace RepositoryTests
                     Id = Guid.NewGuid(),
                     SubjectId = Guid.NewGuid(),
                     UserId = Guid.NewGuid(),
-                    MarkId = Guid.NewGuid(),
+                    ClassName = default,
+                    TaskID = Guid.NewGuid(),
                     StartTime = DateTime.Now,
                     EndTime = DateTime.Now.AddHours(1)
                 },
@@ -69,14 +77,14 @@ namespace RepositoryTests
                     Id = Guid.NewGuid(),
                     SubjectId = Guid.NewGuid(),
                     UserId = Guid.NewGuid(),
-                    MarkId = Guid.NewGuid(),
+                    ClassName = default,
+                    TaskID = Guid.NewGuid(),
                     StartTime = DateTime.Now.AddHours(2),
                     EndTime = DateTime.Now.AddHours(3)
                 }
             };
 
-            await _context.Lessons.AddRangeAsync(testLessons);
-            await _context.SaveChangesAsync();
+            return testLessons;
         }
 
 
@@ -129,9 +137,10 @@ namespace RepositoryTests
             // Arrange
             var newLesson = new Lesson
             {
+                Id = Guid.NewGuid(),
                 SubjectId = Guid.NewGuid(),
                 UserId = Guid.NewGuid(),
-                MarkId = Guid.NewGuid(),
+                ClassName = default,
                 StartTime = DateTime.Now,
                 EndTime = DateTime.Now.AddHours(1)
             };
@@ -170,7 +179,8 @@ namespace RepositoryTests
             var idToUpdate = lessonToUpdate.Id;
             var newSubjectId = Guid.NewGuid();
             var newUserId = Guid.NewGuid();
-            var newMarkId = Guid.NewGuid();
+            var newClassName = default(string);
+            var newTaskId = Guid.NewGuid();
             var newStartTime = DateTime.Now.AddDays(1);
             var newEndTime = DateTime.Now.AddDays(1).AddHours(1);
 
@@ -179,7 +189,8 @@ namespace RepositoryTests
                 idToUpdate,
                 newSubjectId,
                 newUserId,
-                newMarkId,
+                newClassName,
+                newTaskId,
                 newStartTime,
                 newEndTime);
 
@@ -189,7 +200,7 @@ namespace RepositoryTests
             var updatedLesson = await _repository.GetById(idToUpdate);
             Assert.AreEqual(newSubjectId, updatedLesson.SubjectId);
             Assert.AreEqual(newUserId, updatedLesson.UserId);
-            Assert.AreEqual(newMarkId, updatedLesson.MarkId);
+            Assert.AreEqual(newClassName, updatedLesson.ClassName);
             Assert.AreEqual(newStartTime, updatedLesson.StartTime);
             Assert.AreEqual(newEndTime, updatedLesson.EndTime);
         }
