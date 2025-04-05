@@ -45,9 +45,16 @@ namespace TimeTable.Controllers
         [HttpPost]
         public JsonResult Create(Lesson lesson)
         { 
-            _lessonService.Add(lesson);
-            return new JsonResult(Ok());
+            if (_lessonService.Add(lesson).Result != Guid.Empty)
+            {
+                return new JsonResult(Ok());
+            }
+            else
+            {
+                return new JsonResult(BadRequest());
+            }
         }
+        
         [HttpPost]
         public JsonResult GiveMark(Guid subjectId, Guid userId, int markId)
         {
