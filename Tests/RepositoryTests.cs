@@ -58,6 +58,7 @@ namespace RepositoryTests
                     SubjectId = Guid.NewGuid(),
                     UserId = Guid.NewGuid(),
                     ClassName = default,
+                    TaskID = Guid.NewGuid(),
                     StartTime = DateTime.Now.AddHours(1),
                     EndTime = DateTime.Now.AddHours(2)
                 },
@@ -67,6 +68,7 @@ namespace RepositoryTests
                     SubjectId = Guid.NewGuid(),
                     UserId = Guid.NewGuid(),
                     ClassName = default,
+                    TaskID = Guid.NewGuid(),
                     StartTime = DateTime.Now,
                     EndTime = DateTime.Now.AddHours(1)
                 },
@@ -76,6 +78,7 @@ namespace RepositoryTests
                     SubjectId = Guid.NewGuid(),
                     UserId = Guid.NewGuid(),
                     ClassName = default,
+                    TaskID = Guid.NewGuid(),
                     StartTime = DateTime.Now.AddHours(2),
                     EndTime = DateTime.Now.AddHours(3)
                 }
@@ -177,6 +180,7 @@ namespace RepositoryTests
             var newSubjectId = Guid.NewGuid();
             var newUserId = Guid.NewGuid();
             var newClassName = default(string);
+            var newTaskId = Guid.NewGuid();
             var newStartTime = DateTime.Now.AddDays(1);
             var newEndTime = DateTime.Now.AddDays(1).AddHours(1);
 
@@ -186,6 +190,7 @@ namespace RepositoryTests
                 newSubjectId,
                 newUserId,
                 newClassName,
+                newTaskId,
                 newStartTime,
                 newEndTime);
 
