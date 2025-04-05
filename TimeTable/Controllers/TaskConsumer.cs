@@ -24,6 +24,7 @@ namespace TimeTable.Controllers
             };
 
             _topic = topic;
+            _lessonRepository = lessonRepository;
             _consumer = new ConsumerBuilder<Ignore, string>(_config).Build();
             _consumer.Subscribe(_topic);
 
