@@ -14,7 +14,7 @@ namespace TimeTable.Controllers
         private readonly LessonRepository _lessonRepository;
         private bool _disposed;
 
-        public TaskConsumer(ConsumerConfig config = null, string topic = "task")
+        public TaskConsumer(LessonRepository lessonRepository, ConsumerConfig config = null, string topic = "task")
         {
             _config = config ?? new ConsumerConfig
             {
