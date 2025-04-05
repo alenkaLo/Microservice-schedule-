@@ -8,7 +8,8 @@ namespace TimeTable.Services
         Task<Lesson> GetLessonById(Guid id);
         Task<Guid> Add(Lesson lesson);
         Task<Guid> Delete(Guid id);
-        Task<Guid> Update(Guid id, Guid subjectId, Guid userId, Guid markId, DateTime startTime, DateTime endtime);
+        Task<Guid> Update(Guid id, Guid subjectId, Guid userId, string className, DateTime startTime, DateTime endtime);
+        Task<List<Lesson>> GetUserSchedule(Guid id);
         Task GiveMark(Guid subjectId, Guid userId, int Mark);
 
     }
