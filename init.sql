@@ -3,6 +3,7 @@ create table lesson (
 	, subject_id 	uuid		not null	
 	, start_time	timestamp	not null
 	, end_time	timestamp	not null
+	, date_lesson	timestamp	not null
 	, name_class	varchar(8)	not null
 	, teacher_id	uuid		not null	
 	, task_id	uuid		
