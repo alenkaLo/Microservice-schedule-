@@ -84,17 +84,7 @@ paths:
           in: query
           required: true
           schema:
-            $ref: "#/components/schemas/lesson"
-        - name: Повторять
-          description: 1 - повторять, 0 - не повторять
-          in: query
-          required: true
-          schema:
-            type: boolean
-        - name: Конец повторов.
-          in: query
-          schema:
-            type: string
+            $ref: "#/components/schemas/lessons"
       responses:
         "200": 
           description: урок сохранен
@@ -126,11 +116,16 @@ paths:
         - Уроки
       summary: Изменить урок.
       parameters:
+        - name: id
+          in: query
+          required: true
+          schema:
+            type: string
         - name: Данные урока.
           in: query
           required: true
           schema:
-            $ref: "#/components/schemas/lessonUpd"
+            $ref: "#/components/schemas/lessons"
       responses:
         "200": 
           description: изменения сохранены
@@ -180,11 +175,35 @@ components:
           type: string
         endTime: 
           type: string
+        date:
+          type: string
         className:
           type: string
         teacherId:
           type: string
         task:
+          type: string
+          
+    lessons:
+      type: object
+      properties:
+        subject:
+          $ref: '#/components/schemas/subject'
+        startTime: 
+          type: string
+        endTime: 
+          type: string
+        startDate:
+          type: string
+        endDate:
+          type: string
+        dayWeek:
+          type: array
+          items:
+            type: string
+        className:
+          type: string
+        teacherId:
           type: string
         
     schedule:
@@ -203,35 +222,23 @@ components:
           type: string
         endTime: 
           type: string
+        startDate:
+          type: string
+        endDate:
+          type: string
         
     lessonCreate:
       type: object
       properties:
         id:
-          type: string
-          
-    lessonUpd:
-      type: object
-      properties:
-        id:
-          type: string
-        subject:
-          $ref: '#/components/schemas/subject'
-        startTime: 
-          type: string
-        endTime: 
-          type: string
-        className:
-          type: string
-        teacherId:
-          type: string
-        task:
-          type: string
+          type: array
+          items:
+            type: string
         
     mark:
       type: object
       properties:
-        Date: 
+        date: 
           type: string
         teacherId:
           type: string
