@@ -18,6 +18,9 @@ namespace TimeTable.Controllers
             _lessonService = lessonService;
         }
 
+  
+
+
 
         [HttpPost("{mark:int}")]
         public JsonResult Mark(int mark, Guid LessonId)
