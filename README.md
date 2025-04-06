@@ -37,6 +37,6 @@
 
 4. Инициализировать базу данных (только при первом запуске)
 
-	`docker exec -i schedule-db-1 psql -U postgres -f init.sql`
+	`docker exec -i microservice-schedule--db-1 psql -U postgres -f init.sql`
     
 В дальнейшем можно включать/выключать контейнер `docker-compose up -d`/`docker-compose down`. Данные будут храниться в папке `pgdata`, которая создается при запуске контейнера.
