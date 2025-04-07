@@ -40,18 +40,16 @@ namespace TimeTable.Controllers
 
             return new JsonResult(Ok(result));
         }
-
-
         [HttpPost]
         public JsonResult Create(Lesson lesson)
         { 
             _lessonService.Add(lesson);
             return new JsonResult(Ok());
         }
-        [HttpPost]
-        public JsonResult GiveMark(Guid subjectId, Guid userId, int markId)
+        [HttpPost("CreateWithRepeat")]
+        public JsonResult CreateWithRepeat([FromBody]Lesson lesson, [FromQuery]List<DateTime> days, DateTime startPeriod, DateTime endPeriod)
         {
-            _lessonService.GiveMark(subjectId,userId,markId);
+            _lessonService.AddWithRepeat(lesson, days, startPeriod, endPeriod);
             return new JsonResult(Ok());
         }
         [HttpPut("{id:guid}")]
@@ -66,7 +64,7 @@ namespace TimeTable.Controllers
         [HttpDelete("{id:guid}")]
         public JsonResult Delete(Guid id)
         {
-            var result =_lessonService.Delete(id);
+            var result = _lessonService.Delete(id);
             if (result == null)
                 return new JsonResult(NotFound());
 

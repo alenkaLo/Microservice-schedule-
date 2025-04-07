@@ -7,7 +7,7 @@ namespace TimeTable.Services
     public class LessonService : ILessonService
     {
         private readonly ILessonRepository _lessonRepository;
-
+        private const int week = 7;
 
         public LessonService(ILessonRepository lessonRepository)
         {
@@ -28,6 +28,35 @@ namespace TimeTable.Services
         {
            return await _lessonRepository.Add(lesson);
         }
+        public async Task<Guid> AddWithRepeat(Lesson lesson, List<DateTime> days, DateTime startPeriod, DateTime endPeriod)
+        {
+            var startTime = startPeriod.Date;
+            if (startTime > endPeriod)
+            {
+                var time = startTime;
+                startTime = endPeriod;
+                endPeriod = time;
+            }
+            while(startTime < endPeriod)
+            {
+                foreach(var day in days)
+                {
+                    var time = startTime;
+                    if ((double)time.DayOfWeek < (double)day.DayOfWeek)
+                        time = time.AddDays((double)day.DayOfWeek - (double)time.DayOfWeek);
+                    else
+                        time = time.AddDays(week - ((double)time.DayOfWeek - (double)day.DayOfWeek));
+                    if (time > endPeriod) 
+                        break;
+                    lesson.StartTime = time + lesson.StartTime.TimeOfDay;
+                    lesson.EndTime = time + lesson.EndTime.TimeOfDay;
+                    lesson.Id=Guid.NewGuid();
+                    await _lessonRepository.Add(lesson);
+                }
+                startTime = startTime.AddDays(week);
+            }
+            return lesson.Id;
+        }
         public async Task<Guid> Delete(Guid id)
         {
             return await _lessonRepository.Delete(id);
@@ -40,10 +69,6 @@ namespace TimeTable.Services
         public async Task<List<Lesson>> GetUserSchedule(Guid id)
         {
             return await _lessonRepository.GetUserLessons(id);
-        }
-        public async Task GiveMark(Guid subjectId, Guid userId, int Mark)
-        {
-            await Task.Delay(0);
         }
     }
 }

@@ -7,9 +7,9 @@ namespace TimeTable.Services
         Task<List<Lesson>> GetAllLessons();
         Task<Lesson> GetLessonById(Guid id);
         Task<Guid> Add(Lesson lesson);
+        Task<Guid> AddWithRepeat(Lesson lesson, List<DateTime> days, DateTime startPeriod, DateTime endPeriod);
         Task<Guid> Delete(Guid id);
-        Task<Guid> Update(Guid id, Guid subjectId, Guid userId, Guid markId, DateTime startTime, DateTime endtime);
-        Task GiveMark(Guid subjectId, Guid userId, int Mark);
-
+        Task<Guid> Update(Guid id, Guid subjectId, Guid userId, DateTime startTime, DateTime endtime);
+        Task<List<Lesson>> GetUserSchedule(Guid id);
     }
 }

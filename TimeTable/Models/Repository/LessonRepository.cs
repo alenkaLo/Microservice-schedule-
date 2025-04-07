@@ -36,16 +36,14 @@ namespace TimeTable.Models.Repository
             await _dbContext.SaveChangesAsync();
             return lesson.Id;   
         }
-
+        
         public async Task<Guid> Delete(Guid id)
         {
             await _dbContext.Lessons
                  .Where(x => x.Id == id)
                  .ExecuteDeleteAsync();
             return id;
-
         }
-
         public async Task<Guid> Update(Guid id, Guid subjectId, Guid userId, DateTime startTime, DateTime endtime)
         {
             await _dbContext.Lessons
