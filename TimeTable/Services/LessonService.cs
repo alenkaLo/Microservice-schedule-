@@ -26,6 +26,8 @@ namespace TimeTable.Services
 
         public async Task<Guid> Add(Lesson lesson)
         {
+            if (lesson.StartTime > lesson.EndTime) 
+                return Guid.Empty;
            return await _lessonRepository.Add(lesson);
         }
         public async Task<Guid> Delete(Guid id)

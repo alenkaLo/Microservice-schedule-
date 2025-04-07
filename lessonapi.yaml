@@ -248,3 +248,5 @@ components:
           type: string
         mark:
           type: string
+        comment:
+          type: string
