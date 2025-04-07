@@ -5,12 +5,10 @@ services:
     ports:
       - "8001:8001"
     environment:
-      - ASPNETCORE_HTTPS_PORTS=8001
+      - ASPNETCORE_HTTP_PORTS=8001
       - ASPNETCORE_ENVIRONMENT=Development
-      - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/aspnetapp.pfx
     volumes:
       - ${APPDATA}/microsoft/UserSecrets/:/home/app/.microsoft/usersecrets
-      - ${USERPROFILE}/.aspnet/https/:/https/
     stdin_open: true
     tty: true
     build:
@@ -28,3 +26,4 @@ services:
       - ./init.sql:/init.sql
     ports:
       - 5432:5432
+
