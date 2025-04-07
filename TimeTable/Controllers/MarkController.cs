@@ -54,8 +54,8 @@ namespace TimeTable.Controllers
 
             try
             {
-                var deliveryResult = await producer.ProduceAsync("marks-topic", message); // <-- замени топик при необходимости
-                Console.WriteLine($"Message delivered to {deliveryResult.TopicPartitionOffset}");
+                var deliveryResult =  producer.ProduceAsync("marks-topic", message); // <-- замени топик при необходимости
+                //Console.WriteLine($"Message delivered to {deliveryResult.TopicPartitionOffset}");
             }
             catch (ProduceException<Null, string> e)
             {
