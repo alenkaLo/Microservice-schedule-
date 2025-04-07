@@ -7,7 +7,7 @@ using TimeTable.Models.Entity;
 namespace TimeTable.Models.Repository
 {
     //Слой для взаимодействия с бд
-    public class LessonRepository:ILessonRepository
+    public class LessonRepository : ILessonRepository
     {
         private readonly LessonDbContext _dbContext;
         public LessonRepository(LessonDbContext dbContext)
