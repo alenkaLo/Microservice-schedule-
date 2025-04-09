@@ -38,9 +38,7 @@ namespace TimeTable.Controllers
                 Mark = Mark,
                 Timestamp = DateTime.UtcNow
             };
-
-            // Сериализация объекта в JSON строку
-            string jsonMessage = System.Text.Json.JsonSerializer.Serialize(kafkaEvent); // <-- исправлено
+            string jsonMessage = System.Text.Json.JsonSerializer.Serialize(kafkaEvent);
 
             // Конфигурация Kafka
             var config = new ProducerConfig
@@ -55,7 +53,6 @@ namespace TimeTable.Controllers
             try
             {
                 var deliveryResult =  producer.ProduceAsync("marks-topic", message); // <-- замени топик при необходимости
-                //Console.WriteLine($"Message delivered to {deliveryResult.TopicPartitionOffset}");
             }
             catch (ProduceException<Null, string> e)
             {
