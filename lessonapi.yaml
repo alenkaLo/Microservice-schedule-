@@ -111,7 +111,7 @@ paths:
           description: урок не найден
         
           
-    put:
+    patch:
       tags:
         - Уроки
       summary: Изменить урок.
@@ -125,7 +125,7 @@ paths:
           in: query
           required: true
           schema:
-            $ref: "#/components/schemas/lessons"
+            $ref: "#/components/schemas/lesson"
       responses:
         "200": 
           description: изменения сохранены
