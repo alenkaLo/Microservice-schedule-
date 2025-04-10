@@ -160,17 +160,12 @@ paths:
         
 components:
   schemas:
-    subject:
-      type: object
-      properties:
-        name:
-          type: string
           
     lesson:
       type: object
       properties:
         subject:
-          $ref: '#/components/schemas/subject'
+          type: string
         startTime: 
           type: string
         endTime: 
@@ -188,7 +183,7 @@ components:
       type: object
       properties:
         subject:
-          $ref: '#/components/schemas/subject'
+          type: string
         startTime: 
           type: string
         endTime: 
