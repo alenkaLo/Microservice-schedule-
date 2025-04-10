@@ -50,7 +50,7 @@ namespace TimeTable.Models.Repository
             Guid id,
             Guid? subjectId = null,
             Guid? userId = null,
-            string className = null,
+            string? className = null,
             Guid? taskId = null,
             DateTime? startTime = null,
             DateTime? endTime = null)
