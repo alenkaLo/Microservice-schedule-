@@ -46,12 +46,12 @@ namespace TimeTable.Models.Repository
 
         }
 
-        public async Task<Guid> Update(Guid id, Guid subjectId, Guid userId, string className, Guid taskId, DateTime startTime, DateTime endtime)
+        public async Task<Guid> Update(Guid id, string subject, Guid userId, string className, Guid taskId, DateTime date, DateTime startTime, DateTime endtime)
         {
             await _dbContext.Lessons
                 .Where(x => x.Id == id)
                 .ExecuteUpdateAsync(s => s
-                .SetProperty(x => x.SubjectId, x => subjectId)
+                .SetProperty(x => x.Subject, x => subject)
                 .SetProperty(x => x.UserId, x => userId)
                 .SetProperty(x => x.ClassName, x => className)
                 .SetProperty(x => x.TaskID, x => taskId)
