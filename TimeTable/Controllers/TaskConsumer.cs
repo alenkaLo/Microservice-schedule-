@@ -3,6 +3,7 @@ using System.Threading;
 using TimeTable.Models.Entity;
 using TimeTable.Models.Repository;
 using static Confluent.Kafka.ConfigPropertyNames;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace TimeTable.Controllers
 {
@@ -65,7 +66,7 @@ namespace TimeTable.Controllers
                 Guid lessonId = Guid.Parse(jsonObject["lesson_id"]?.ToString());
 
                 var lesson = _lessonRepository.GetById(lessonId).Result;
-                await _lessonRepository.Update(lessonId, lesson.SubjectId, lesson.UserId, lesson.ClassName, taskId, lesson.StartTime, lesson.EndTime);
+                await _lessonRepository.Update(lessonId, lesson.Subject, lesson.UserId, lesson.ClassName, taskId, lesson.Date, lesson.StartTime, lesson.EndTime);
             }
             catch (Exception ex)
             {
