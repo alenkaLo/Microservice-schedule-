@@ -172,7 +172,7 @@ namespace RepositoryTests
         }
 
         [TestMethod]
-        public async Task Update_ValidData_UpdatesLessonAndReturnsId()
+        public async Task Update_AllValidData_UpdatesLessonAndReturnsId()
         {
             // Arrange
             var lessonToUpdate = _context.Lessons.First();
@@ -203,6 +203,29 @@ namespace RepositoryTests
             Assert.AreEqual(newClassName, updatedLesson.ClassName);
             Assert.AreEqual(newStartTime, updatedLesson.StartTime);
             Assert.AreEqual(newEndTime, updatedLesson.EndTime);
+        }
+
+        [TestMethod]
+        public async Task Update_ValidPartData_UpdatesLessonAndReturnsId()
+        {
+            // Arrange
+            var lessonToUpdate = _context.Lessons.First();
+            var idToUpdate = lessonToUpdate.Id;
+            var newTaskId = Guid.NewGuid();
+
+            // Act
+            var result = await _repository.Update(idToUpdate, taskId: newTaskId);
+
+
+            // Assert
+            Assert.AreEqual(idToUpdate, result);
+            var updatedLesson = await _repository.GetById(idToUpdate);
+            Assert.AreNotEqual(lessonToUpdate.TaskID, updatedLesson.TaskID);
+            Assert.AreEqual(lessonToUpdate.SubjectId, updatedLesson.SubjectId);
+            Assert.AreEqual(lessonToUpdate.UserId, updatedLesson.UserId);
+            Assert.AreEqual(lessonToUpdate.ClassName, updatedLesson.ClassName);
+            Assert.AreEqual(lessonToUpdate.StartTime, updatedLesson.StartTime);
+            Assert.AreEqual(lessonToUpdate.EndTime, updatedLesson.EndTime);
         }
     }
 }

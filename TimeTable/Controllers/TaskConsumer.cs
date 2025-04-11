@@ -23,10 +23,9 @@ namespace TimeTable.Controllers
                 AutoOffsetReset = AutoOffsetReset.Earliest
             };
 
-            _topic = topic;
             _lessonRepository = lessonRepository;
             _consumer = new ConsumerBuilder<Ignore, string>(_config).Build();
-            _consumer.Subscribe(_topic);
+            _consumer.Subscribe(topic);
 
         }
 
@@ -64,8 +63,7 @@ namespace TimeTable.Controllers
                 Guid taskId = Guid.Parse(jsonObject["task_id"]?.ToString());
                 Guid lessonId = Guid.Parse(jsonObject["lesson_id"]?.ToString());
 
-                var lesson = _lessonRepository.GetById(lessonId).Result;
-                await _lessonRepository.Update(lessonId, lesson.SubjectId, lesson.UserId, lesson.ClassName, taskId, lesson.StartTime, lesson.EndTime);
+                await _lessonRepository.Update(lessonId, taskId: taskId);
             }
             catch (Exception ex)
             {
