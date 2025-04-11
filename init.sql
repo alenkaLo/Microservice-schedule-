@@ -1,6 +1,6 @@
 create table lesson (
 	lesson_id	uuid		primary key
-	, subject_id 	uuid		not null	
+	, subject 	varchar(8)	not null	
 	, start_time	time     	not null
 	, end_time	time    	not null
 	, date_lesson	date    	not null
