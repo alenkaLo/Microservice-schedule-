@@ -6,6 +6,7 @@ using TimeTable.Models.Entity;
 using System.Data;
 using TimeTable.Models.Repository;
 using TimeTable.Services;
+using TimeTable.Contracts;
 
 namespace TimeTable.Controllers
 {
@@ -20,9 +21,9 @@ namespace TimeTable.Controllers
         }
 
         [HttpGet("{id:guid}")]
-        public JsonResult GetById(Guid id)
+        public async Task<JsonResult> GetById(Guid id)
         {
-            var result = _lessonService.GetLessonById(id);
+            var result = await _lessonService.GetLessonById(id);
 
             if (result == null)
                 return new JsonResult(NotFound());
@@ -31,14 +32,16 @@ namespace TimeTable.Controllers
         }
 
         [HttpGet]
-        public JsonResult GetAll(Guid id)
+        public async Task<ActionResult<List<LessonRessponse>>> GetAll()
         {
-            var result = _lessonService.GetAllLessons();
+            var result = await _lessonService.GetAllLessons();
 
             if (result == null)
                 return new JsonResult(NotFound());
 
-            return new JsonResult(Ok(result));
+            var response = result.Select(b => new LessonRessponse(b.Id, b.Subject, b.UserId, b.ClassName, b.TaskID, b.Date, b.StartTime, b.EndTime));
+
+            return Ok(response);
         }
 
 
@@ -55,18 +58,18 @@ namespace TimeTable.Controllers
             }
         }
         [HttpPut("{id:guid}")]
-        public JsonResult Update(Guid id, Guid subjectId, Guid userId, string className, Guid taskId, DateTime startTime, DateTime endtime)
+        public async Task<JsonResult> Update(Guid id, string subject, Guid userId, string className, Guid taskId, DateTime date, DateTime startTime, DateTime endtime)
         {
-            var result = _lessonService.Update(id, subjectId, userId, className, taskId, startTime, endtime);
+            var result = await _lessonService.Update(id, subject, userId, className, taskId, date, startTime, endtime);
             if (result == null)
                 return new JsonResult(NotFound());
 
             return new JsonResult(Ok(result));
         }
         [HttpDelete("{id:guid}")]
-        public JsonResult Delete(Guid id)
+        public async Task<JsonResult> Delete(Guid id)
         {
-            var result =_lessonService.Delete(id);
+            var result = await _lessonService.Delete(id);
             if (result == null)
                 return new JsonResult(NotFound());
 
