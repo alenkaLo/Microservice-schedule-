@@ -28,3 +28,6 @@ services:
       - ./init.sql:/init.sql
     ports:
       - 5432:5432
+
+      
+

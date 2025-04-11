@@ -7,7 +7,7 @@ using TimeTable.Models.Entity;
 namespace TimeTable.Models.Repository
 {
     //Слой для взаимодействия с бд
-    public class LessonRepository:ILessonRepository
+    public class LessonRepository : ILessonRepository
     {
         private readonly LessonDbContext _dbContext;
         public LessonRepository(LessonDbContext dbContext)
@@ -36,14 +36,13 @@ namespace TimeTable.Models.Repository
             await _dbContext.SaveChangesAsync();
             return lesson.Id;   
         }
-
+        
         public async Task<Guid> Delete(Guid id)
         {
             await _dbContext.Lessons
                  .Where(x => x.Id == id)
                  .ExecuteDeleteAsync();
             return id;
-
         }
 
         public async Task<Guid> Update(Guid id, string subject, Guid userId, string className, Guid taskId, DateTime date, DateTime startTime, DateTime endtime)
