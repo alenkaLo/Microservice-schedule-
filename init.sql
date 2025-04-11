@@ -9,7 +9,4 @@ create table lesson (
 	, task_id	uuid		
 );
 
-create table subject (
-	subject_id	uuid		primary key
-	, name 		varchar(32)	
-);
+
