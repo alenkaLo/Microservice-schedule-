@@ -7,7 +7,11 @@ var builder = WebApplication.CreateBuilder(args);
 
 
 // Add services to the container.
-builder.Services.AddDbContext<LessonDbContext>(options => options.UseInMemoryDatabase("LessonDb"));
+builder.Services.AddDbContext<LessonDbContext>(
+    options =>
+    {
+        options.UseNpgsql(builder.Configuration.GetConnectionString(nameof(LessonDbContext)));
+    });
 
 builder.Services.AddControllers();
 builder.Services.AddScoped<ILessonService, LessonService>();
