@@ -10,7 +10,7 @@ using TimeTable.Contracts;
 
 namespace TimeTable.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     [ApiController]
     public class LessonController : ControllerBase
     {   
@@ -21,25 +21,25 @@ namespace TimeTable.Controllers
         }
 
         [HttpGet("{id:guid}")]
-        public async Task<JsonResult> GetById(Guid id)
+        public async Task<ActionResult<LessonRessponse>> GetById(Guid id)
         {
             var result = await _lessonService.GetLessonById(id);
 
             if (result == null)
-                return new JsonResult(NotFound());
+                return NotFound();
 
-            return new JsonResult(Ok(result));
+            return Ok(result);
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<LessonRessponse>>> GetAll()
+        public async Task<ActionResult<List<LessonRessponse>>> GetAll(TimeOnly startTime, TimeOnly endTime, DateOnly startDate, DateOnly endDate)
         {
-            var result = await _lessonService.GetAllLessons();
+            var result = await _lessonService.GetAllLessons(startTime, endTime, startDate, endDate);
 
             if (result == null)
                 return new JsonResult(NotFound());
 
-            var response = result.Select(b => new LessonRessponse(b.Id, b.Subject, b.UserId, b.ClassName, b.TaskID, b.Date, b.StartTime, b.EndTime));
+            var response = result.Select(b => new LessonRessponse(b.Id, b.Subject, b.UserId, b.ClassName, b.TaskID, b.Date.ToString(), b.StartTime.ToString(), b.EndTime.ToString()));
 
             return Ok(response);
         }
@@ -62,7 +62,7 @@ namespace TimeTable.Controllers
             return new JsonResult(Ok());
         }
         [HttpPut("{id:guid}")]
-        public async Task<JsonResult> Update(Guid id, string subject, Guid userId, string className, Guid taskId, DateTime date, DateTime startTime, DateTime endtime)
+        public async Task<JsonResult> Update(Guid id, string subject, Guid userId, string className, Guid taskId, DateOnly date, TimeOnly startTime, TimeOnly endtime)
         {
             var result = await _lessonService.Update(id, subject, userId, className, taskId, date, startTime, endtime);
             if (result == null)
