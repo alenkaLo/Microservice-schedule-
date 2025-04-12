@@ -20,7 +20,7 @@ namespace TimeTable.Controllers
         {
             var result = await _lessonService.GetAllForPeriod(startTime, endTime, startDate, endDate);
             if (result == null)
-                return new JsonResult(NotFound());
+                return NotFound();
     
             var response = result.Select(b => new LessonRessponse(b.Id, b.Subject, b.UserId, b.ClassName, b.TaskID, b.Date.ToString(), b.StartTime.ToString(), b.EndTime.ToString()));
 
@@ -32,11 +32,11 @@ namespace TimeTable.Controllers
         {
             var result = await _lessonService.GetUserSchedule(id, startTime, endTime, startDate, endDate);
             if (result == null)
-                return new JsonResult(NotFound());
+                return NotFound();
     
             var response = result.Select(b => new LessonRessponse(b.Id, b.Subject, b.UserId, b.ClassName, b.TaskID, b.Date.ToString(), b.StartTime.ToString(), b.EndTime.ToString()));
 
-            return Ok(response);
+            return Ok(result);
         } 
 
         [HttpGet("class/{className}")]
@@ -44,11 +44,9 @@ namespace TimeTable.Controllers
         {
             var result = await _lessonService.GetClassSchedule(className, startTime, endTime, startDate, endDate);
             if (result == null)
-                return new JsonResult(NotFound());
-    
-            var response = result.Select(b => new LessonRessponse(b.Id, b.Subject, b.UserId, b.ClassName, b.TaskID, b.Date.ToString(), b.StartTime.ToString(), b.EndTime.ToString()));
+                return NotFound();
             
-            return Ok(response);
+            return Ok(result);
         }
     }
 }

@@ -10,9 +10,4 @@
         string StartTime,
         string EndTime);
 
-    public record Period(
-        string StartTime,
-        string EndTime,
-        string StartDate,
-        string EndDate);
 }
