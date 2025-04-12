@@ -4,9 +4,9 @@
         Guid Id,
         string Subject,
         Guid UserId,
-        string ClassName,
-        Guid TaskID,
-        DateTime Date,
-        DateTime StartTime,
-        DateTime EndTime);
+        string? ClassName,
+        Guid? TaskID,
+        DateOnly Date,
+        TimeOnly StartTime,
+        TimeOnly EndTime);
 }

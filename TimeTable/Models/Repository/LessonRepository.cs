@@ -45,17 +45,27 @@ namespace TimeTable.Models.Repository
             return id;
         }
 
-        public async Task<Guid> Update(Guid id, string subject, Guid userId, string className, Guid taskId, DateTime date, DateTime startTime, DateTime endtime)
+        public async Task<Guid> Update(
+            Guid id,
+            string? subject = null,
+            Guid? userId = null,
+            string? className = null,
+            Guid? taskId = null,
+            DateOnly? date = null,
+            TimeOnly? startTime = null,
+            TimeOnly? endTime = null)
         {
-            await _dbContext.Lessons
-                .Where(x => x.Id == id)
-                .ExecuteUpdateAsync(s => s
-                .SetProperty(x => x.Subject, x => subject)
-                .SetProperty(x => x.UserId, x => userId)
-                .SetProperty(x => x.ClassName, x => className)
-                .SetProperty(x => x.TaskID, x => taskId)
-                .SetProperty(x => x.StartTime, x => startTime)
-                .SetProperty(x => x.EndTime, x => endtime));
+            var query = _dbContext.Lessons.Where(x => x.Id == id);
+
+            await query.ExecuteUpdateAsync(s => s
+                .SetProperty(x => x.Subject, x => subject ?? x.Subject)
+                .SetProperty(x => x.UserId, x => userId ?? x.UserId)
+                .SetProperty(x => x.ClassName, x => className ?? x.ClassName)
+                .SetProperty(x => x.TaskID, x => taskId ?? x.TaskID)
+                .SetProperty(x => x.Date, x => date ?? x.Date)
+                .SetProperty(x => x.StartTime, x => startTime ?? x.StartTime)
+                .SetProperty(x => x.EndTime, x => endTime ?? x.EndTime));
+
             return id;
         }
 
