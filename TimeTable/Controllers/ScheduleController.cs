@@ -15,15 +15,15 @@ namespace TimeTable.Controllers
         }
 
         [HttpGet]
-        public JsonResult Get()
+        public async Task<JsonResult> Get()
         {
-            return new JsonResult(Ok(_lessonService.GetAllLessons()));
+            return new JsonResult(Ok( await _lessonService.GetAllLessons()));
         }
 
         [HttpGet("user/{id}")]
-        public JsonResult GetUserSchedule(Guid id)
+        public async Task<JsonResult> GetUserSchedule(Guid id)
         {
-            return new JsonResult(Ok(_lessonService.GetUserSchedule(id)));
+            return new JsonResult(Ok(await _lessonService.GetUserSchedule(id)));
         }
     }
 }
