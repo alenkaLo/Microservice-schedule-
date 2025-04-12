@@ -32,12 +32,12 @@ namespace TimeTable.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<LessonRessponse>>> GetAll(TimeOnly startTime, TimeOnly endTime, DateOnly startDate, DateOnly endDate)
+        public async Task<ActionResult<List<LessonRessponse>>> GetAll()
         {
-            var result = await _lessonService.GetAllLessons(startTime, endTime, startDate, endDate);
+            var result = await _lessonService.GetAllLessons();
 
             if (result == null)
-                return new JsonResult(NotFound());
+                return NotFound();
 
             var response = result.Select(b => new LessonRessponse(b.Id, b.Subject, b.UserId, b.ClassName, b.TaskID, b.Date.ToString(), b.StartTime.ToString(), b.EndTime.ToString()));
 

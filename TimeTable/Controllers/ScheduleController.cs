@@ -16,13 +16,9 @@ namespace TimeTable.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<LessonRessponse>>> Get(string startTime, string endTime, string startDate, string endDate)
+        public async Task<ActionResult<List<LessonRessponse>>> Get(TimeOnly startTime, TimeOnly endTime, DateOnly startDate, DateOnly endDate)
         {
-            TimeOnly.TryParse(startTime, out var startTime2);
-            TimeOnly.TryParse(endTime, out var endTime2);
-            DateOnly.TryParse(startDate, out var startDate2);   
-            DateOnly.TryParse(endDate, out var endDate2);
-            var result = await _lessonService.GetAllLessons(startTime2, endTime2, startDate2, endDate2);
+            var result = await _lessonService.GetAllForPeriod(startTime, endTime, startDate, endDate);
             if (result == null)
                 return new JsonResult(NotFound());
     
@@ -32,13 +28,9 @@ namespace TimeTable.Controllers
         }
 
         [HttpGet("user/{id}")]
-        public async Task<ActionResult<List<LessonRessponse>>> GetUserSchedule(Guid id, string startTime, string endTime, string startDate, string endDate)
+        public async Task<ActionResult<List<LessonRessponse>>> GetUserSchedule(Guid id, TimeOnly startTime, TimeOnly endTime, DateOnly startDate, DateOnly endDate)
         {
-            TimeOnly.TryParse(startTime, out var startTime2);
-            TimeOnly.TryParse(endTime, out var endTime2);
-            DateOnly.TryParse(startDate, out var startDate2);   
-            DateOnly.TryParse(endDate, out var endDate2);
-            var result = await _lessonService.GetUserSchedule(id, startTime2, endTime2, startDate2, endDate2);
+            var result = await _lessonService.GetUserSchedule(id, startTime, endTime, startDate, endDate);
             if (result == null)
                 return new JsonResult(NotFound());
     
@@ -48,9 +40,9 @@ namespace TimeTable.Controllers
         } 
 
         [HttpGet("class/{className}")]
-        public async Task<ActionResult<List<LessonRessponse>>> GetClassSchedule(string className)
+        public async Task<ActionResult<List<LessonRessponse>>> GetClassSchedule(string className, TimeOnly startTime, TimeOnly endTime, DateOnly startDate, DateOnly endDate)
         {
-            var result = await _lessonService.GetClassSchedule(className);
+            var result = await _lessonService.GetClassSchedule(className, startTime, endTime, startDate, endDate);
             if (result == null)
                 return new JsonResult(NotFound());
     
