@@ -45,7 +45,7 @@ namespace TimeTable.Controllers
             // Конфигурация Kafka
             var config = new ProducerConfig
             {
-                BootstrapServers = "localhost:9092" // <-- замени на адрес своего Kafka-брокера
+                BootstrapServers = "localhost:9093" // <-- замени на адрес своего Kafka-брокера
             };
 
             // Отправка события в Kafka
