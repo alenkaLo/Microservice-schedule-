@@ -69,10 +69,37 @@ namespace TimeTable.Models.Repository
             return id;
         }
 
-        public async Task<List<Lesson>> GetUserLessons(Guid userid)
+        public async Task<List<Lesson>> GetAllForPeriod(TimeOnly startTime, TimeOnly endTime, DateOnly startDate, DateOnly endDate)
+        {
+            return await _dbContext.Lessons
+            .Where(l => l.StartTime >= startTime)
+            .Where(l => l.EndTime <= endTime)
+            .Where(l => l.Date >= startDate)
+            .Where(l => l.Date <= endDate)
+            .AsNoTracking()
+            .ToListAsync();
+        }
+
+        public async Task<List<Lesson>> GetUserLessons(Guid userid, TimeOnly startTime, TimeOnly endTime, DateOnly startDate, DateOnly endDate)
         {
             return await _dbContext.Lessons
             .Where(x => x.UserId == userid)
+            .Where(l => l.StartTime >= startTime)
+            .Where(l => l.EndTime <= endTime)
+            .Where(l => l.Date >= startDate)
+            .Where(l => l.Date <= endDate)
+            .AsNoTracking()
+            .ToListAsync();
+        }
+
+        public async Task<List<Lesson>> GetClassLessons(string className, TimeOnly startTime, TimeOnly endTime, DateOnly startDate, DateOnly endDate)
+        {
+            return await _dbContext.Lessons
+            .Where(x => x.ClassName == className)
+            .Where(l => l.StartTime >= startTime)
+            .Where(l => l.EndTime <= endTime)
+            .Where(l => l.Date >= startDate)
+            .Where(l => l.Date <= endDate)
             .AsNoTracking()
             .ToListAsync();
         }

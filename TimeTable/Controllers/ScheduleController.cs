@@ -1,10 +1,11 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using TimeTable.Services;
+using TimeTable.Contracts;
 
 namespace TimeTable.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     [ApiController]
     public class ScheduleController : ControllerBase
     {
@@ -15,15 +16,33 @@ namespace TimeTable.Controllers
         }
 
         [HttpGet]
-        public async Task<JsonResult> Get()
+        public async Task<ActionResult<List<LessonResponse>>> Get(TimeOnly startTime, TimeOnly endTime, DateOnly startDate, DateOnly endDate)
         {
-            return new JsonResult(Ok( await _lessonService.GetAllLessons()));
+            var result = await _lessonService.GetAllForPeriod(startTime, endTime, startDate, endDate);
+            if (result is null)
+                return NotFound();
+
+            return Ok(result);
         }
 
         [HttpGet("user/{id}")]
-        public async Task<JsonResult> GetUserSchedule(Guid id)
+        public async Task<ActionResult<List<LessonResponse>>> GetUserSchedule(Guid id, TimeOnly startTime, TimeOnly endTime, DateOnly startDate, DateOnly endDate)
         {
-            return new JsonResult(Ok(await _lessonService.GetUserSchedule(id)));
+            var result = await _lessonService.GetUserSchedule(id, startTime, endTime, startDate, endDate);
+            if (result is null)
+                return NotFound();
+    
+            return Ok(result);
+        } 
+
+        [HttpGet("class/{className}")]
+        public async Task<ActionResult<List<LessonResponse>>> GetClassSchedule(string className, TimeOnly startTime, TimeOnly endTime, DateOnly startDate, DateOnly endDate)
+        {
+            var result = await _lessonService.GetClassSchedule(className, startTime, endTime, startDate, endDate);
+            if (result is null)
+                return NotFound();
+            
+            return Ok(result);
         }
     }
 }
