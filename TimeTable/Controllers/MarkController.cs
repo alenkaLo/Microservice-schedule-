@@ -21,38 +21,29 @@ namespace TimeTable.Controllers
             _lessonService = lessonService;
         }
         [HttpPost]
-        public async Task<JsonResult> GiveMark(Guid TeacherID, Guid StudentID, Guid LessonID, int Mark)
+        public async Task<JsonResult> GiveMark(/*Guid TeacherID, Guid StudentID, Guid LessonID, int Mark*/)
         {
-            var lesson = await _lessonService.GetLessonById(LessonID);
-            if (lesson is null)
-                return new JsonResult(NotFound("No such lesson was found."));
+            //var lesson = await _lessonService.GetLessonById(LessonID);
+            //if (lesson is null)
+            //    return new JsonResult(NotFound("No such lesson was found."));
 
-            if (lesson.UserId != TeacherID)
-                return new JsonResult(BadRequest("This lesson is taught by another teacher."));
+            //if (lesson.UserId != TeacherID)
+            //    return new JsonResult(BadRequest("This lesson is taught by another teacher."));
 
             // Создание события
             var kafkaEvent = new
             {
-                StudentId = StudentID,
-                LessonId = LessonID,
-                Mark = Mark,
+                //StudentId = StudentID,
+                //LessonId = LessonID,
+                //Mark = Mark,
                 Timestamp = DateTime.UtcNow
             };
             string jsonMessage = System.Text.Json.JsonSerializer.Serialize(kafkaEvent);
 
-            // Конфигурация Kafka
-            var config = new ProducerConfig
-            {
-                BootstrapServers = "localhost:9093" // <-- замени на адрес своего Kafka-брокера
-            };
-
-            // Отправка события в Kafka
-            using var producer = new ProducerBuilder<Null, string>(config).Build();
-            var message = new Message<Null, string> { Value = jsonMessage };
 
             try
             {
-                var deliveryResult =  producer.ProduceAsync("marks-topic", message); // <-- замени топик при необходимости
+                var deliveryResult =  KafkaController.CreateEventInKafka("VALERA-LOX", message); // <-- замени топик при необходимости
             }
             catch (ProduceException<Null, string> e)
             {
