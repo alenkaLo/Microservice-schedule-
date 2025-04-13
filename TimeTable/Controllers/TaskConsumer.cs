@@ -65,8 +65,7 @@ namespace TimeTable.Controllers
                 Guid taskId = Guid.Parse(jsonObject["task_id"]?.ToString());
                 Guid lessonId = Guid.Parse(jsonObject["lesson_id"]?.ToString());
 
-                var lesson = _lessonRepository.GetById(lessonId).Result;
-                await _lessonRepository.Update(lessonId, lesson.Subject, lesson.UserId, lesson.ClassName, taskId, lesson.Date, lesson.StartTime, lesson.EndTime);
+                await _lessonRepository.Update(lessonId, taskId: taskId);
             }
             catch (Exception ex)
             {
