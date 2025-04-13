@@ -1,4 +1,6 @@
-﻿namespace TimeTable.Contracts
+﻿using System;
+
+namespace TimeTable.Contracts
 {
     public record LessonRessponse(
         Guid Id,
@@ -7,6 +9,6 @@
         string ClassName,
         Guid TaskID,
         DateTime Date,
-        DateTime StartTime,
-        DateTime EndTime);
+        TimeOnly StartTime,
+        TimeOnly EndTime);
 }
