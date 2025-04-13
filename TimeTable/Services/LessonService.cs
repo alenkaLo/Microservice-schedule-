@@ -32,32 +32,39 @@ namespace TimeTable.Services
         }
         public async Task<Guid> AddWithRepeat(Lesson lesson, List<DateTime> days, DateTime startPeriod, DateTime endPeriod)
         {
+            if (startPeriod > endPeriod)
+                return Guid.Empty;
             var startTime = startPeriod.Date;
-            if (startTime > endPeriod)
+            while (startTime < endPeriod)
             {
-                var time = startTime;
-                startTime = endPeriod;
-                endPeriod = time;
-            }
-            while(startTime < endPeriod)
-            {
-                foreach(var day in days)
-                {
-                    var time = startTime;
-                    if ((double)time.DayOfWeek < (double)day.DayOfWeek)
-                        time = time.AddDays((double)day.DayOfWeek - (double)time.DayOfWeek);
-                    else
-                        time = time.AddDays(week - ((double)time.DayOfWeek - (double)day.DayOfWeek));
-                    if (time > endPeriod) 
-                        break;
-                    lesson.StartTime = time + lesson.StartTime.TimeOfDay;
-                    lesson.EndTime = time + lesson.EndTime.TimeOfDay;
-                    lesson.Id=Guid.NewGuid();
-                    await _lessonRepository.Add(lesson);
-                }
-                startTime = startTime.AddDays(week);
+                startTime =  await ForEach(lesson, days, startTime, endPeriod);
             }
             return lesson.Id;
+        }
+        private async Task<DateTime> ForEach(Lesson lesson, List<DateTime> days, DateTime startTime, DateTime endPeriod)
+        {
+            foreach (var day in days)
+            {
+                var time = Offset(startTime, day);
+                if (time > endPeriod)
+                    break;
+                await AddWithOffset(lesson, time);
+            }
+            return startTime.AddDays(week);
+        }
+        private DateTime Offset(DateTime startTime, DateTime day)
+        {
+            var time = startTime;
+            time = (double)time.DayOfWeek < (double)day.DayOfWeek 
+                ? time.AddDays((double)day.DayOfWeek - (double)time.DayOfWeek) 
+                : time.AddDays(week - ((double)time.DayOfWeek - (double)day.DayOfWeek));
+            return time;
+        }
+        private async Task<Guid> AddWithOffset(Lesson lesson, DateTime time)
+        {
+            lesson.Date = time;
+            lesson.Id = Guid.NewGuid();
+            return await _lessonRepository.Add(lesson);
         }
         public async Task<Guid> Delete(Guid id)
         {
