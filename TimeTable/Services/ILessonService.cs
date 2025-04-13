@@ -1,4 +1,5 @@
-﻿using TimeTable.Models.Entity;
+﻿using System;
+using TimeTable.Models.Entity;
 
 namespace TimeTable.Services
 {
