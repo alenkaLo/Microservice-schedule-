@@ -39,9 +39,7 @@ namespace TimeTable.Controllers
             if (result is null)
                 return NotFound();
 
-            var response = result.Select(b => new LessonResponse(b.Id, b.Subject, b.UserId, b.ClassName, b.TaskID, b.Date.ToString(), b.StartTime.ToString(), b.EndTime.ToString()));
-
-            return Ok(response);
+            return Ok(result);
         }
         [HttpPost]
         public JsonResult Create(Lesson lesson)
