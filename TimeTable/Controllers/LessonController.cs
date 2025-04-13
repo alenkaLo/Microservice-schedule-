@@ -58,7 +58,7 @@ namespace TimeTable.Controllers
             }
         }
         [HttpPut("{id:guid}")]
-        public async Task<JsonResult> Update(Guid id, string subject, Guid userId, string className, Guid taskId, DateTime date, DateTime startTime, DateTime endtime)
+        public async Task<JsonResult> Update(Guid id, string subject, Guid userId, string className, Guid taskId, DateTime date, TimeOnly startTime, TimeOnly endtime)
         {
             var result = await _lessonService.Update(id, subject, userId, className, taskId, date, startTime, endtime);
             if (result == null)
