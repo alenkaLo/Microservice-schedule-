@@ -21,25 +21,25 @@ namespace TimeTable.Controllers
         }
 
         [HttpGet("{id:guid}")]
-        public async Task<ActionResult<LessonRessponse>> GetById(Guid id)
+        public async Task<ActionResult<LessonResponse>> GetById(Guid id)
         {
             var result = await _lessonService.GetLessonById(id);
 
-            if (result == null)
+            if (result is null)
                 return NotFound();
 
             return Ok(result);
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<LessonRessponse>>> GetAll()
+        public async Task<ActionResult<List<LessonResponse>>> GetAll()
         {
             var result = await _lessonService.GetAllLessons();
 
-            if (result == null)
+            if (result is null)
                 return NotFound();
 
-            var response = result.Select(b => new LessonRessponse(b.Id, b.Subject, b.UserId, b.ClassName, b.TaskID, b.Date.ToString(), b.StartTime.ToString(), b.EndTime.ToString()));
+            var response = result.Select(b => new LessonResponse(b.Id, b.Subject, b.UserId, b.ClassName, b.TaskID, b.Date.ToString(), b.StartTime.ToString(), b.EndTime.ToString()));
 
             return Ok(response);
         }

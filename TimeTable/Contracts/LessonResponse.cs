@@ -1,6 +1,6 @@
 ﻿namespace TimeTable.Contracts
 {
-    public record LessonRessponse(
+    public record LessonResponse(
         Guid Id,
         string Subject,
         Guid UserId,
