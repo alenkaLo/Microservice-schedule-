@@ -36,7 +36,21 @@ namespace TimeTable.Models.Repository
             await _dbContext.SaveChangesAsync();
             return lesson.Id;   
         }
-        
+        public async Task<Guid> AddList(List<Lesson> lessons)
+        {
+            if (lessons == null || !lessons.Any())
+            {
+                // Возвращаем пустой Guid, если список null или пустой
+                return Guid.Empty;
+            }
+            await _dbContext.Lessons.AddRangeAsync(lessons);
+            await _dbContext.SaveChangesAsync();
+
+            // Возвращаем ID первого урока в списке
+            // (или можно выбрать другую логику возврата)
+            return lessons.First().Id;
+        }
+
         public async Task<Guid> Delete(Guid id)
         {
             await _dbContext.Lessons
