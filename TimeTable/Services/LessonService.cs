@@ -50,8 +50,8 @@ namespace TimeTable.Services
                         time = time.AddDays(week - ((double)time.DayOfWeek - (double)day.DayOfWeek));
                     if (time > endPeriod) 
                         break;
-                    lesson.StartTime = time + lesson.StartTime.TimeOfDay;
-                    lesson.EndTime = time + lesson.EndTime.TimeOfDay;
+                    //lesson.StartTime = time + lesson.StartTime;
+                    //lesson.EndTime = time + lesson.EndTime;
                     lesson.Id=Guid.NewGuid();
                     await _lessonRepository.Add(lesson);
                 }

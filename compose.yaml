@@ -1,17 +1,17 @@
 services:
-  server:
-    image: microservice-schedule:latest
-    container_name: microservice-schedule
-    ports:
-      - 8001:8001
-    environment:
-      - ASPNETCORE_HTTP_PORTS=8001
-      - ASPNETCORE_ENVIRONMENT=Development
-    stdin_open: true
-    tty: true
-    build:
-      context: .
-      target: final
+#  server:
+#    image: microservice-schedule:latest
+#    container_name: microservice-schedule
+#    ports:
+#      - 8001:8001
+#    environment:
+#      - ASPNETCORE_HTTP_PORTS=8001
+#      - ASPNETCORE_ENVIRONMENT=Development
+#    stdin_open: true
+#    tty: true
+#    build:
+#      context: .
+#      target: final
   db:
     image: postgres:16-alpine
     restart: always
