@@ -23,8 +23,8 @@ namespace TimeTable.Controllers
         };
         public static  async Task<DeliveryResult<Null,string>> CreateEventInKafka(string NameTopic, string JsonMessage)
         {
-            var message = new Message<Null, string> { Value = JsonMessage };
-            using (var producer = new ProducerBuilder<Null, string>(config).Build())
+            var message = new Message<string, string> { Value = JsonMessage,Key ="LL" };
+            using (var producer = new ProducerBuilder<string, string>(config).Build())
             {
                await producer.ProduceAsync(NameTopic, message);
             }

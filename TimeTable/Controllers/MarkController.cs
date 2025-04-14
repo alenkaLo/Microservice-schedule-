@@ -39,11 +39,9 @@ namespace TimeTable.Controllers
                 Timestamp = DateTime.UtcNow
             };
             string jsonMessage = System.Text.Json.JsonSerializer.Serialize(kafkaEvent);
-
-
             try
             {
-                var deliveryResult =  KafkaController.CreateEventInKafka("VALERA-LOX", message); // <-- замени топик при необходимости
+                var deliveryResult =  KafkaController.CreateEventInKafka("VALERA-LOX", "xyu"); // <-- замени топик при необходимости
             }
             catch (ProduceException<Null, string> e)
             {

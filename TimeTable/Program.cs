@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using TimeTable.Controllers;
 using TimeTable.Data;
 using TimeTable.Models.Repository;
 using TimeTable.Services;
@@ -13,6 +14,8 @@ builder.Services.AddDbContext<LessonDbContext>(
         options.UseNpgsql(builder.Configuration.GetConnectionString(nameof(LessonDbContext)));
     });
 
+builder.Services.AddSingleton<KafkaController>(new KafkaController());
+//builder.Services.AddControllers();
 builder.Services.AddControllers();
 builder.Services.AddScoped<ILessonService, LessonService>();
 builder.Services.AddScoped<ILessonRepository, LessonRepository>();
