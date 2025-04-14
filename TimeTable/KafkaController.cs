@@ -25,12 +25,16 @@ namespace TimeTable.Controllers
             {
                 try
                 {
-                   var result = await producer.ProduceAsync(NameTopic, message);
-                   return new JsonResult("Mark given and event sent to Kafka.");
+                    await producer.ProduceAsync(NameTopic, message);
+                    var result = new JsonResult("Mark given and event sent to Kafka.");
+                    result.StatusCode = 200;
+                    return result;
                 }
                 catch (ProduceException<Null, string> e)
                 {
-                    return new JsonResult("Failed to send message to Kafka.");
+                    var result = new JsonResult("Failed to send message to Kafka.");
+                    result.StatusCode = 500;
+                    return result;
                 }
             }
         }

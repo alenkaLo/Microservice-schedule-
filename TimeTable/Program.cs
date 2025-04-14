@@ -15,7 +15,6 @@ builder.Services.AddDbContext<LessonDbContext>(
     });
 
 builder.Services.AddSingleton<KafkaController>(new KafkaController());
-//builder.Services.AddControllers();
 builder.Services.AddControllers();
 builder.Services.AddScoped<ILessonService, LessonService>();
 builder.Services.AddScoped<ILessonRepository, LessonRepository>();

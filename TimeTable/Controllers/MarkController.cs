@@ -21,39 +21,27 @@ namespace TimeTable.Controllers
             _lessonService = lessonService;
         }
         [HttpPost]
-        public async Task<JsonResult> GiveMark(/*Guid TeacherID, Guid StudentID, Guid LessonID, int Mark*/)
+        public async Task<JsonResult> GiveMark(DateTime Date, Guid TeacherID, Guid StudentID, string Comment, Guid LessonID, int Mark)
         {
-            //var lesson = await _lessonService.GetLessonById(LessonID);
-            //if (lesson is null)
-            //    return new JsonResult(NotFound("No such lesson was found."));
+            var lesson = await _lessonService.GetLessonById(LessonID);
 
-            //if (lesson.UserId != TeacherID)
-            //    return new JsonResult(BadRequest("This lesson is taught by another teacher."));
+            if (lesson is null)
+                return new JsonResult(NotFound("No such lesson was found."));
+            if (lesson.UserId != TeacherID)
+                return new JsonResult(BadRequest("This lesson is taught by another teacher."));
 
-            // Создание события
             var kafkaEvent = new
             {
-                //StudentId = StudentID,
-                //LessonId = LessonID,
-                //Mark = Mark,
-                Timestamp = DateTime.UtcNow
+                date = Date,
+                teacherID = TeacherID,
+                studentId = StudentID,
+                comment = Comment,
+                lessonId = LessonID,
+                mark = Mark,
+  
             };
             string jsonMessage = System.Text.Json.JsonSerializer.Serialize(kafkaEvent);
-            return await KafkaController.CreateEventInKafka("VALERA-LOX", "xyu");
-        }
-        [HttpPost("{mark:int}")]
-        public JsonResult Mark(int mark, Guid LessonId)
-        {
-            var lesson = _lessonService.GetLessonById(LessonId);
-
-            var data = new
-            {
-                lesson,
-                mark,
-            };
-            var result = _lessonService.GetLessonById(LessonId);
-
-            return new JsonResult(Ok(data));
+            return await KafkaController.CreateEventInKafka("VALERA-LOX", jsonMessage);
         }
     }
 }
