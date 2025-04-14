@@ -24,7 +24,7 @@ namespace TimeTable.Services
             return await _lessonRepository.GetById(id);
         }
 
-        public async Task<Guid> Add(Lesson lesson)
+        public async Task<Guid?> Add(Lesson lesson)
         {
             if (lesson.StartTime > lesson.EndTime) 
                 return Guid.Empty;
@@ -59,11 +59,11 @@ namespace TimeTable.Services
             }
             return lesson.Id;
         }
-        public async Task<Guid> Delete(Guid id)
+        public async Task<Guid?> Delete(Guid id)
         {
             return await _lessonRepository.Delete(id);
         }
-        public async Task<Guid> Update(Guid id, string subject, Guid userId, string className, Guid taskId, DateOnly date, TimeOnly startTime, TimeOnly endtime)
+        public async Task<Guid?> Update(Guid id, string? subject, Guid? userId, string? className, Guid? taskId, DateOnly? date, TimeOnly? startTime, TimeOnly? endtime)
         {
             return await _lessonRepository.Update(id, subject, userId, className, taskId, date, startTime, endtime);
         }
