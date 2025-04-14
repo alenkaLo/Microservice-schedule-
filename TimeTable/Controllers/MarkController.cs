@@ -39,17 +39,7 @@ namespace TimeTable.Controllers
                 Timestamp = DateTime.UtcNow
             };
             string jsonMessage = System.Text.Json.JsonSerializer.Serialize(kafkaEvent);
-            try
-            {
-                var deliveryResult =  KafkaController.CreateEventInKafka("VALERA-LOX", "xyu"); // <-- замени топик при необходимости
-            }
-            catch (ProduceException<Null, string> e)
-            {
-                Console.WriteLine($"Delivery failed: {e.Error.Reason}");
-                return new JsonResult(StatusCode(500, "Failed to send message to Kafka."));
-            }
-
-            return new JsonResult(Ok("Mark given and event sent to Kafka."));
+            return await KafkaController.CreateEventInKafka("VALERA-LOX", "xyu");
         }
         [HttpPost("{mark:int}")]
         public JsonResult Mark(int mark, Guid LessonId)
