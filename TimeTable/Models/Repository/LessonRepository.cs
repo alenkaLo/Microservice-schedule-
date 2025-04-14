@@ -19,7 +19,7 @@ namespace TimeTable.Models.Repository
         {
             return await _dbContext.Lessons
                 .AsNoTracking()
-                .OrderBy(l => l.StartTime)
+                .OrderBy(l => l.Date)
                 .ToListAsync();
         }
 
@@ -30,13 +30,13 @@ namespace TimeTable.Models.Repository
                 .FirstOrDefaultAsync(l => l.Id == id);
         }
 
-        public async Task<Guid> Add(Lesson lesson)
+        public async Task<Guid?> Add(Lesson lesson)
         {
+            if(lesson.Id == Guid.Empty) lesson.Id = Guid.NewGuid();
             await _dbContext.Lessons.AddAsync(lesson);
-            await _dbContext.SaveChangesAsync();
-            return lesson.Id;   
+            _dbContext.SaveChanges();
+            return lesson.Id;
         }
-        
         public async Task<Guid> Delete(Guid id)
         {
             await _dbContext.Lessons
@@ -44,8 +44,11 @@ namespace TimeTable.Models.Repository
                  .ExecuteDeleteAsync();
             return id;
         }
-
-        public async Task<Guid> Update(Guid id, string subject, Guid userId, string className, Guid taskId, DateTime date, TimeOnly startTime, TimeOnly endtime)
+        public async Task DeleteAll()
+        {
+            await _dbContext.Lessons.ExecuteDeleteAsync();
+        }
+        public async Task<Guid> Update(Guid id, string subject, Guid userId, string className, Guid taskId, DateOnly date, TimeOnly startTime, TimeOnly endtime)
         {
             await _dbContext.Lessons
                 .Where(x => x.Id == id)

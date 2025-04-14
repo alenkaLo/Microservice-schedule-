@@ -44,11 +44,12 @@ namespace TimeTable.Controllers
             return Ok(response);
         }
         [HttpPost]
-        public JsonResult Create(Lesson lesson)
+        public ActionResult Create(Lesson lesson)
         { 
-           if (_lessonService.Add(lesson).Result != Guid.Empty)
+            var result = _lessonService.Add(lesson);
+            if (result.Result != Guid.Empty)
             {
-                return new JsonResult(Ok());
+                return Ok(result);
             }
             else
             {
@@ -56,13 +57,13 @@ namespace TimeTable.Controllers
             }
         }
         [HttpPost("CreateWithRepeat")]
-        public JsonResult CreateWithRepeat([FromBody]Lesson lesson, [FromQuery]List<DateTime> days, DateTime startPeriod, DateTime endPeriod)
+        public JsonResult CreateWithRepeats([FromBody]Lesson lesson, [FromQuery]List<DateTime> days, DateOnly startPeriod, DateOnly endPeriod)
         {
-            _lessonService.AddWithRepeat(lesson, days, startPeriod, endPeriod);
+            _lessonService.AddWithRepeats(lesson, days, startPeriod, endPeriod);
             return new JsonResult(Ok());
         }
         [HttpPut("{id:guid}")]
-        public async Task<JsonResult> Update(Guid id, string subject, Guid userId, string className, Guid taskId, DateTime date, TimeOnly startTime, TimeOnly endtime)
+        public async Task<JsonResult> Update(Guid id, string subject, Guid userId, string className, Guid taskId, DateOnly date, TimeOnly startTime, TimeOnly endtime)
         {
             var result = await _lessonService.Update(id, subject, userId, className, taskId, date, startTime, endtime);
             if (result == null)
