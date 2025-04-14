@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Update.Internal;
 using TimeTable.Data;
 using TimeTable.Models.Entity;
+using TimeTable.Logging;
 
 namespace TimeTable.Models.Repository
 {
@@ -30,22 +31,40 @@ namespace TimeTable.Models.Repository
                 .FirstOrDefaultAsync(l => l.Id == id);
         }
 
-        public async Task<Guid> Add(Lesson lesson)
+        public async Task<Guid?> Add(Lesson lesson)
         {
-            await _dbContext.Lessons.AddAsync(lesson);
-            await _dbContext.SaveChangesAsync();
-            return lesson.Id;   
+            Guid? id = lesson.Id;
+            try
+            {
+                await _dbContext.Lessons.AddAsync(lesson);
+                await _dbContext.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                ConsoleLogger.Logger.LogError(ex.Message);
+            }
+            finally
+            {
+                id = null;
+            }
+            return id;
         }
         
-        public async Task<Guid> Delete(Guid id)
+        public async Task<Guid?> Delete(Guid id)
         {
-            await _dbContext.Lessons
-                 .Where(x => x.Id == id)
-                 .ExecuteDeleteAsync();
+            var query = _dbContext.Lessons.Where(x => x.Id == id);
+
+            if (!query.Any())
+            {
+                ConsoleLogger.Logger.LogInformation($"Объект {id} для удаления не найден");
+                return null;
+            }
+
+            await query.ExecuteDeleteAsync();
             return id;
         }
 
-        public async Task<Guid> Update(
+        public async Task<Guid?> Update(
             Guid id,
             string? subject = null,
             Guid? userId = null,
@@ -56,6 +75,12 @@ namespace TimeTable.Models.Repository
             TimeOnly? endTime = null)
         {
             var query = _dbContext.Lessons.Where(x => x.Id == id);
+
+            if (!query.Any())
+            {
+                ConsoleLogger.Logger.LogInformation($"Объект {id} для обновления не найден");
+                return null;
+            }
 
             await query.ExecuteUpdateAsync(s => s
                 .SetProperty(x => x.Subject, x => subject ?? x.Subject)

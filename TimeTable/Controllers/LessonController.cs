@@ -42,15 +42,15 @@ namespace TimeTable.Controllers
             return Ok(result);
         }
         [HttpPost]
-        public JsonResult Create(Lesson lesson)
+        public ActionResult Create(Lesson lesson)
         { 
-           if (_lessonService.Add(lesson).Result != Guid.Empty)
+           if (_lessonService.Add(lesson).Result != null)
             {
-                return new JsonResult(Ok());
+                return Ok();
             }
             else
             {
-                return new JsonResult(BadRequest());
+                return BadRequest();
             }
         }
         [HttpPost("CreateWithRepeat")]
@@ -60,23 +60,23 @@ namespace TimeTable.Controllers
             return new JsonResult(Ok());
         }
         [HttpPut("{id:guid}")]
-        public async Task<JsonResult> Update(Guid id, string subject, Guid userId, string className, Guid taskId, DateOnly date, TimeOnly startTime, TimeOnly endtime)
+        public async Task<ActionResult> Update(Guid id, string? subject, Guid? userId, string? className, Guid? taskId, DateOnly? date, TimeOnly? startTime, TimeOnly? endtime)
         {
             var result = await _lessonService.Update(id, subject, userId, className, taskId, date, startTime, endtime);
             if (result == null)
-                return new JsonResult(NotFound());
+                return NotFound();
 
-            return new JsonResult(Ok(result));
+            return Ok(result);
         }
         [HttpDelete("{id:guid}")]
-        public async Task<JsonResult> Delete(Guid id)
+        public async Task<ActionResult> Delete(Guid id)
         {
             var result = await _lessonService.Delete(id);
 
             if (result == null)
-                return new JsonResult(NotFound());
+                return NotFound();
 
-            return new JsonResult(Ok(result));
+            return Ok(result);
         }
     }
 }
