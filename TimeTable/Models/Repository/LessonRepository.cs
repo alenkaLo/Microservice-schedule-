@@ -39,14 +39,11 @@ namespace TimeTable.Models.Repository
                 await _dbContext.Lessons.AddAsync(lesson);
                 await _dbContext.SaveChangesAsync();
             }
-            catch (Exception ex)
-            {
-                ConsoleLogger.Logger.LogError(ex.Message);
-            }
-            finally
+            catch
             {
                 id = null;
             }
+
             return id;
         }
         
