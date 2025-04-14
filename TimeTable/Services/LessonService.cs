@@ -51,10 +51,17 @@ namespace TimeTable.Services
                         time = time.AddDays(week - ((double)time.DayOfWeek - (double)day.DayOfWeek));
                     if (time > endPeriod) 
                         break;
-                    Lesson currentLesson = lesson.Clone();
-                    currentLesson.Id = Guid.NewGuid();
-                    currentLesson.Date = time;
-                    lessonsToAdd.Add(currentLesson);
+
+                    // Lesson currentLesson = lesson.Clone();
+                    // currentLesson.Id = Guid.NewGuid();
+                    // currentLesson.Date = time;
+                    // lessonsToAdd.Add(currentLesson);
+
+                    lesson.StartTime = lesson.StartTime;
+                    lesson.EndTime = lesson.EndTime;
+                    lesson.Id=Guid.NewGuid();
+                    await _lessonRepository.Add(lesson);
+
                 }
                 startTime = startTime.AddDays(week);
             }
@@ -65,14 +72,22 @@ namespace TimeTable.Services
         {
             return await _lessonRepository.Delete(id);
         }
-        public async Task<Guid> Update(Guid id, string subject, Guid userId, string className, Guid taskId, DateTime date, TimeOnly startTime, TimeOnly endtime)
+        public async Task<Guid> Update(Guid id, string subject, Guid userId, string className, Guid taskId, DateOnly date, TimeOnly startTime, TimeOnly endtime)
         {
             return await _lessonRepository.Update(id, subject, userId, className, taskId, date, startTime, endtime);
         }
-
-        public async Task<List<Lesson>> GetUserSchedule(Guid id)
+        public async Task<List<Lesson>> GetAllForPeriod(TimeOnly startTime, TimeOnly endTime, DateOnly startDate, DateOnly endDate)
         {
-            return await _lessonRepository.GetUserLessons(id);
+            return await _lessonRepository.GetAllForPeriod(startTime, endTime, startDate, endDate);
+        }
+        public async Task<List<Lesson>> GetUserSchedule(Guid id, TimeOnly startTime, TimeOnly endTime, DateOnly startDate, DateOnly endDate)
+        {
+            return await _lessonRepository.GetUserLessons(id, startTime, endTime, startDate, endDate);
+        }
+
+        public async Task<List<Lesson>> GetClassSchedule(string className, TimeOnly startTime, TimeOnly endTime, DateOnly startDate, DateOnly endDate)
+        {
+            return await _lessonRepository.GetClassLessons(className, startTime, endTime, startDate, endDate);
         }
     }
 }

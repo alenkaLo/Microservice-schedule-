@@ -8,7 +8,7 @@ namespace TimeTable.Contracts
         Guid UserId,
         string ClassName,
         Guid TaskID,
-        DateTime Date,
+        DateOnly Date,
         TimeOnly StartTime,
         TimeOnly EndTime);
 }
