@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using TimeTable.Data;
+using TimeTable.Logging;
 using TimeTable.Models.Repository;
 using TimeTable.Services;
 
@@ -34,5 +35,7 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
+
+ConsoleLogger.SetLogger(app.Logger);
 
 app.Run();

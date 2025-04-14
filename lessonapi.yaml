@@ -48,12 +48,6 @@ paths:
           required: true
           schema:
             type: string
-        - name: type
-          description: класс - 1 или учитель - 0.
-          in: query
-          required: true
-          schema:
-            type: boolean 
         - name: period
           in: query
           required: true
@@ -72,9 +66,63 @@ paths:
           description: расписание не найдено
         '412':
           description: начало урока позже конца
-          
+    
+  /schedule/class:
+    get:
+      tags:
+        - Расписание
+      summary: Получение расписания класса.
+      description: Получение расписания пользователя за выбранный период.
+      parameters:
+        - name: className
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: period
+          in: query
+          required: true
+          schema:
+            $ref: '#/components/schemas/period'
+      responses:
+        "200": 
+          description: Сводное расписание на неделю.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/schedule'
+        "400": 
+          description: неверные параметры запроса
+        '404':
+          description: расписание не найдено
+        '412':
+          description: начало урока позже конца  
           
   /lesson:
+
+    get:
+      tags:
+        - Уроки
+      summary: Получение урока.
+      description: Получение урока по id урока.
+      parameters:
+        - name: id
+          in: query
+          required: true
+          schema:
+            type: string
+      responses: 
+        "200": 
+          description: Информация о уроке.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/lesson"
+        "400": 
+          description: неверные параметры запроса
+        '412':
+          description: начало урока позже конца
+          
     post:
       tags:
         - Уроки
@@ -111,7 +159,7 @@ paths:
           description: урок не найден
         
           
-    patch:
+    put:
       tags:
         - Уроки
       summary: Изменить урок.
@@ -125,7 +173,7 @@ paths:
           in: query
           required: true
           schema:
-            $ref: "#/components/schemas/lesson"
+            $ref: "#/components/schemas/lessons"
       responses:
         "200": 
           description: изменения сохранены
@@ -160,10 +208,11 @@ paths:
         
 components:
   schemas:
-          
     lesson:
       type: object
       properties:
+        id:
+          type: string
         subject:
           type: string
         startTime: 
@@ -174,7 +223,7 @@ components:
           type: string
         className:
           type: string
-        teacherId:
+        userId:
           type: string
         task:
           type: string
@@ -192,13 +241,13 @@ components:
           type: string
         endDate:
           type: string
-        dayWeek:
+        date:
           type: array
           items:
             type: string
         className:
           type: string
-        teacherId:
+        userId:
           type: string
         
     schedule:
@@ -239,9 +288,9 @@ components:
           type: string
         userid:
           type: string
+        comment:
+          type: string
         lessonid:
           type: string
         mark:
-          type: string
-        comment:
           type: string
