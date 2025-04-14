@@ -11,7 +11,7 @@ using System.Text.Json;
 
 namespace TimeTable.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     [ApiController]
     public class MarkController : ControllerBase
     {

@@ -10,7 +10,7 @@ using TimeTable.Contracts;
 
 namespace TimeTable.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     [ApiController]
     public class LessonController : ControllerBase
     {   
@@ -21,27 +21,25 @@ namespace TimeTable.Controllers
         }
 
         [HttpGet("{id:guid}")]
-        public async Task<JsonResult> GetById(Guid id)
+        public async Task<ActionResult<LessonResponse>> GetById(Guid id)
         {
             var result = await _lessonService.GetLessonById(id);
 
-            if (result == null)
-                return new JsonResult(NotFound());
+            if (result is null)
+                return NotFound();
 
-            return new JsonResult(Ok(result));
+            return Ok(result);
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<LessonRessponse>>> GetAll()
+        public async Task<ActionResult<List<LessonResponse>>> GetAll()
         {
             var result = await _lessonService.GetAllLessons();
 
-            if (result == null)
-                return new JsonResult(NotFound());
+            if (result is null)
+                return NotFound();
 
-            var response = result.Select(b => new LessonRessponse(b.Id, b.Subject, b.UserId, b.ClassName, b.TaskID, b.Date, b.StartTime, b.EndTime));
-
-            return Ok(response);
+            return Ok(result);
         }
         [HttpPost]
         public JsonResult Create(Lesson lesson)
@@ -62,7 +60,7 @@ namespace TimeTable.Controllers
             return new JsonResult(Ok());
         }
         [HttpPut("{id:guid}")]
-        public async Task<JsonResult> Update(Guid id, string subject, Guid userId, string className, Guid taskId, DateTime date, DateTime startTime, DateTime endtime)
+        public async Task<JsonResult> Update(Guid id, string subject, Guid userId, string className, Guid taskId, DateOnly date, TimeOnly startTime, TimeOnly endtime)
         {
             var result = await _lessonService.Update(id, subject, userId, className, taskId, date, startTime, endtime);
             if (result == null)

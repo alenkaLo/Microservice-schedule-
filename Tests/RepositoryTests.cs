@@ -55,32 +55,35 @@ namespace RepositoryTests
                 new Lesson
                 {
                     Id = Guid.NewGuid(),
-                    SubjectId = Guid.NewGuid(),
+                    Subject = "",
                     UserId = Guid.NewGuid(),
                     ClassName = default,
                     TaskID = Guid.NewGuid(),
-                    StartTime = DateTime.Now.AddHours(1),
-                    EndTime = DateTime.Now.AddHours(2)
+                    Date = DateOnly.FromDateTime(DateTime.UtcNow),
+                    StartTime = TimeOnly.FromDateTime(DateTime.UtcNow.AddHours(1)),
+                    EndTime = TimeOnly.FromDateTime(DateTime.UtcNow.AddHours(2))
                 },
                 new Lesson
                 {
                     Id = Guid.NewGuid(),
-                    SubjectId = Guid.NewGuid(),
+                    Subject = "",
                     UserId = Guid.NewGuid(),
                     ClassName = default,
                     TaskID = Guid.NewGuid(),
-                    StartTime = DateTime.Now,
-                    EndTime = DateTime.Now.AddHours(1)
+                    Date = DateOnly.FromDateTime(DateTime.UtcNow),
+                    StartTime = TimeOnly.FromDateTime(DateTime.UtcNow),
+                    EndTime = TimeOnly.FromDateTime(DateTime.UtcNow.AddHours(1))
                 },
                 new Lesson
                 {
                     Id = Guid.NewGuid(),
-                    SubjectId = Guid.NewGuid(),
+                    Subject = "",
                     UserId = Guid.NewGuid(),
                     ClassName = default,
                     TaskID = Guid.NewGuid(),
-                    StartTime = DateTime.Now.AddHours(2),
-                    EndTime = DateTime.Now.AddHours(3)
+                    Date = DateOnly.FromDateTime(DateTime.UtcNow),
+                    StartTime = TimeOnly.FromDateTime(DateTime.UtcNow.AddHours(2)),
+                    EndTime = TimeOnly.FromDateTime(DateTime.UtcNow.AddHours(3))
                 }
             };
 
@@ -115,7 +118,7 @@ namespace RepositoryTests
             // Assert
             Assert.IsNotNull(result);
             Assert.AreEqual(existingLesson.Id, result.Id);
-            Assert.AreEqual(existingLesson.SubjectId, result.SubjectId);
+            Assert.AreEqual(existingLesson.Date, result.Date);
         }
 
         [TestMethod]
@@ -138,11 +141,13 @@ namespace RepositoryTests
             var newLesson = new Lesson
             {
                 Id = Guid.NewGuid(),
-                SubjectId = Guid.NewGuid(),
+                Subject = "",
                 UserId = Guid.NewGuid(),
                 ClassName = default,
-                StartTime = DateTime.Now,
-                EndTime = DateTime.Now.AddHours(1)
+                TaskID = Guid.NewGuid(),
+                Date = DateOnly.FromDateTime(DateTime.UtcNow),
+                StartTime = TimeOnly.FromDateTime(DateTime.UtcNow.AddHours(5)),
+                EndTime = TimeOnly.FromDateTime(DateTime.UtcNow.AddHours(6))
             };
 
             // Act
@@ -152,7 +157,7 @@ namespace RepositoryTests
             Assert.AreEqual(newLesson.Id, result);
             var lessonInDb = await _context.Lessons.FindAsync(result);
             Assert.IsNotNull(lessonInDb);
-            Assert.AreEqual(newLesson.SubjectId, lessonInDb.SubjectId);
+            Assert.AreEqual(newLesson.Date, lessonInDb.Date);
         }
 
         [TestMethod]
@@ -172,25 +177,27 @@ namespace RepositoryTests
         }
 
         [TestMethod]
-        public async Task Update_ValidData_UpdatesLessonAndReturnsId()
+        public async Task Update_ValidAllData_UpdatesLessonAndReturnsId()
         {
             // Arrange
             var lessonToUpdate = _context.Lessons.First();
             var idToUpdate = lessonToUpdate.Id;
-            var newSubjectId = Guid.NewGuid();
+            string newSubject = "";
             var newUserId = Guid.NewGuid();
             var newClassName = default(string);
             var newTaskId = Guid.NewGuid();
-            var newStartTime = DateTime.Now.AddDays(1);
-            var newEndTime = DateTime.Now.AddDays(1).AddHours(1);
+            var newDate = DateOnly.FromDateTime(DateTime.UtcNow.AddDays(1));
+            var newStartTime = TimeOnly.FromDateTime(DateTime.Now);
+            var newEndTime = TimeOnly.FromDateTime(DateTime.Now.AddHours(1));
 
             // Act
             var result = await _repository.Update(
                 idToUpdate,
-                newSubjectId,
+                newSubject,
                 newUserId,
                 newClassName,
                 newTaskId,
+                newDate,
                 newStartTime,
                 newEndTime);
 
@@ -198,11 +205,35 @@ namespace RepositoryTests
             // Assert
             Assert.AreEqual(idToUpdate, result);
             var updatedLesson = await _repository.GetById(idToUpdate);
-            Assert.AreEqual(newSubjectId, updatedLesson.SubjectId);
+            Assert.AreEqual(newSubject, updatedLesson.Subject);
             Assert.AreEqual(newUserId, updatedLesson.UserId);
             Assert.AreEqual(newClassName, updatedLesson.ClassName);
+            Assert.AreEqual(newDate, updatedLesson.Date);
             Assert.AreEqual(newStartTime, updatedLesson.StartTime);
             Assert.AreEqual(newEndTime, updatedLesson.EndTime);
+        }
+
+        [TestMethod]
+        public async Task Update_ValidPartData_UpdatesLessonAndReturnsId()
+        {
+            // Arrange
+            var lessonToUpdate = _context.Lessons.First();
+            var idToUpdate = lessonToUpdate.Id;
+            var newTaskId = Guid.NewGuid();
+
+            // Act
+            var result = await _repository.Update(idToUpdate, taskId: newTaskId);
+
+
+            // Assert
+            Assert.AreEqual(idToUpdate, result);
+            var updatedLesson = await _repository.GetById(idToUpdate);
+            Assert.AreNotEqual(lessonToUpdate.TaskID, updatedLesson.TaskID);
+            Assert.AreEqual(lessonToUpdate.Subject, updatedLesson.Subject);
+            Assert.AreEqual(lessonToUpdate.UserId, updatedLesson.UserId);
+            Assert.AreEqual(lessonToUpdate.ClassName, updatedLesson.ClassName);
+            Assert.AreEqual(lessonToUpdate.StartTime, updatedLesson.StartTime);
+            Assert.AreEqual(lessonToUpdate.EndTime, updatedLesson.EndTime);
         }
     }
 }

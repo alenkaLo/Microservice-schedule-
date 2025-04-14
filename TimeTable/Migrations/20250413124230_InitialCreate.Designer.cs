@@ -12,7 +12,7 @@ using TimeTable.Data;
 namespace TimeTable.Migrations
 {
     [DbContext(typeof(LessonDbContext))]
-    [Migration("20250411085204_InitialCreate")]
+    [Migration("20250413124230_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -37,11 +37,11 @@ namespace TimeTable.Migrations
                     b.Property<DateTime>("Date")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<DateTime>("EndTime")
-                        .HasColumnType("timestamp with time zone");
+                    b.Property<TimeOnly>("EndTime")
+                        .HasColumnType("time without time zone");
 
-                    b.Property<DateTime>("StartTime")
-                        .HasColumnType("timestamp with time zone");
+                    b.Property<TimeOnly>("StartTime")
+                        .HasColumnType("time without time zone");
 
                     b.Property<string>("Subject")
                         .IsRequired()
