@@ -51,7 +51,7 @@ namespace TimeTable.Models.Repository
                 return Guid.Empty;
             }
             await _dbContext.Lessons.AddRangeAsync(lessons);
-            await _dbContext.SaveChangesAsync();
+            _dbContext.SaveChanges();
 
             // Возвращаем ID первого урока в списке
             // (или можно выбрать другую логику возврата)
