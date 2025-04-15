@@ -41,18 +41,17 @@ namespace TimeTable.Controllers
 
             return Ok(result);
         }
+
         [HttpPost]
-        public ActionResult Create(Lesson lesson)
-        { 
-           if (_lessonService.Add(lesson).Result != null)
-            {
-                return Ok();
-            }
-            else
-            {
+        public  async Task<ActionResult> Create(Lesson lesson)
+        {
+            var result = await _lessonService.Add(lesson);
+            if (result == null)
                 return BadRequest();
-            }
+
+            return Ok(result);
         }
+
         [HttpPost("CreateWithRepeat")]
         public JsonResult CreateWithRepeat([FromBody]Lesson lesson, [FromQuery]List<DateTime> days, DateTime startPeriod, DateTime endPeriod)
         {
