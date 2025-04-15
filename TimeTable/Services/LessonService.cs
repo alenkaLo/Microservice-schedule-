@@ -73,7 +73,7 @@ namespace TimeTable.Services
         {
             return await _lessonRepository.Delete(id);
         }
-        public async Task<Guid> Update(Guid id, string subject, Guid userId, string className, Guid taskId, DateOnly date, TimeOnly startTime, TimeOnly endtime)
+        public async Task<Guid> Update(Guid id, string? subject, Guid? userId, string? className, Guid? taskId, DateOnly? date, TimeOnly? startTime, TimeOnly? endtime)
         {
             return await _lessonRepository.Update(id, subject, userId, className, taskId, date, startTime, endtime);
         }

@@ -1,7 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Update.Internal;
 using TimeTable.Data;
+using TimeTable.Logging;
 using TimeTable.Models.Entity;
 
 namespace TimeTable.Models.Repository
@@ -32,10 +31,17 @@ namespace TimeTable.Models.Repository
 
         public async Task<Guid> Add(Lesson lesson)
         {
-            if(lesson.Id == Guid.Empty) lesson.Id = Guid.NewGuid();
-            await _dbContext.Lessons.AddAsync(lesson);
-            _dbContext.SaveChanges();//TODO Nikita await _dbContext.SaveChangesAsync() 
-            return lesson.Id;
+            try
+            {
+                if (lesson.Id == Guid.Empty) lesson.Id = Guid.NewGuid();
+                await _dbContext.Lessons.AddAsync(lesson);
+                _dbContext.SaveChanges();//TODO Nikita await _dbContext.SaveChangesAsync() 
+                return lesson.Id;
+            }
+            catch
+            {
+                return Guid.Empty;
+            }
         }
         public async Task<Guid> AddList(List<Lesson> lessons)
         {
@@ -53,12 +59,17 @@ namespace TimeTable.Models.Repository
         }
         public async Task<Guid> Delete(Guid id)
         {
-            await _dbContext.Lessons
-                 .Where(x => x.Id == id)
-                 .ExecuteDeleteAsync();
+            var query = _dbContext.Lessons.Where(x => x.Id == id);
+
+            if (!query.Any())
+            {
+                ConsoleLogger.Logger.LogInformation($"Объект {id} для удаления не найден");
+                return Guid.Empty;
+            }
+
+            await query.ExecuteDeleteAsync();
             return id;
         }
-
         public async Task<Guid> Update(
             Guid id,
             string? subject = null,
@@ -71,6 +82,12 @@ namespace TimeTable.Models.Repository
         {
             var query = _dbContext.Lessons.Where(x => x.Id == id);
 
+            if (!query.Any())
+            {
+                ConsoleLogger.Logger.LogInformation($"Объект {id} для обновления не найден");
+                return Guid.Empty;
+            }
+
             await query.ExecuteUpdateAsync(s => s
                 .SetProperty(x => x.Subject, x => subject ?? x.Subject)
                 .SetProperty(x => x.UserId, x => userId ?? x.UserId)
@@ -82,7 +99,6 @@ namespace TimeTable.Models.Repository
 
             return id;
         }
-
         public async Task<List<Lesson>> GetAllForPeriod(TimeOnly startTime, TimeOnly endTime, DateOnly startDate, DateOnly endDate)
         {
             return await _dbContext.Lessons
