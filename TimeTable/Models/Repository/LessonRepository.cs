@@ -19,7 +19,7 @@ namespace TimeTable.Models.Repository
         {
             return await _dbContext.Lessons
                 .AsNoTracking()
-                .OrderBy(l => l.StartTime)
+                .OrderBy(l => l.Date)
                 .ToListAsync();
         }
 
@@ -32,9 +32,10 @@ namespace TimeTable.Models.Repository
 
         public async Task<Guid> Add(Lesson lesson)
         {
+            if(lesson.Id == Guid.Empty) lesson.Id = Guid.NewGuid();
             await _dbContext.Lessons.AddAsync(lesson);
-            await _dbContext.SaveChangesAsync();
-            return lesson.Id;   
+            _dbContext.SaveChanges();//TODO Nikita await _dbContext.SaveChangesAsync() 
+            return lesson.Id;
         }
         public async Task<Guid> AddList(List<Lesson> lessons)
         {
@@ -50,7 +51,6 @@ namespace TimeTable.Models.Repository
             // (или можно выбрать другую логику возврата)
             return lessons.First().Id;
         }
-
         public async Task<Guid> Delete(Guid id)
         {
             await _dbContext.Lessons

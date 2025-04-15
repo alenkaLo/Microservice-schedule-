@@ -34,7 +34,7 @@ namespace TimeTable.Controllers
                 {
                     new
                     {
-                        user_id = StudentID,
+                        student_id = StudentID,
                         mark = Mark.ToString(), 
                         comment = Comment 
                     }

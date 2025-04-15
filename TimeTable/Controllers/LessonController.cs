@@ -1,10 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using TimeTable.Models;
-using TimeTable.Data;
+﻿using Microsoft.AspNetCore.Mvc;
 using TimeTable.Models.Entity;
-using System.Data;
-using TimeTable.Models.Repository;
 using TimeTable.Services;
 using TimeTable.Contracts;
 
@@ -42,11 +37,12 @@ namespace TimeTable.Controllers
             return Ok(result);
         }
         [HttpPost]
-        public JsonResult Create(Lesson lesson)
+        public ActionResult Create(Lesson lesson)
         { 
-           if (_lessonService.Add(lesson).Result != Guid.Empty)
+            var result = _lessonService.Add(lesson);
+            if (result.Result != Guid.Empty)
             {
-                return new JsonResult(Ok());
+                return Ok(result);
             }
             else
             {
@@ -54,9 +50,9 @@ namespace TimeTable.Controllers
             }
         }
         [HttpPost("CreateWithRepeat")]
-        public JsonResult CreateWithRepeat([FromBody]Lesson lesson, [FromQuery]List<DateTime> days, DateTime startPeriod, DateTime endPeriod)
+        public JsonResult CreateWithRepeats([FromBody]Lesson lesson, [FromQuery]List<DateTime> days, DateOnly startPeriod, DateOnly endPeriod)
         {
-            _lessonService.AddWithRepeat(lesson, days, startPeriod, endPeriod);
+            _lessonService.AddWithRepeats(lesson, days, startPeriod, endPeriod);
             return new JsonResult(Ok());
         }
         [HttpPut("{id:guid}")]
