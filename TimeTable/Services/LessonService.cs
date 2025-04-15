@@ -8,7 +8,6 @@ namespace TimeTable.Services
     {
         private readonly ILessonRepository _lessonRepository;
         private const int week = 7;
-
         public LessonService(ILessonRepository lessonRepository)
         {
             _lessonRepository = lessonRepository;
@@ -30,49 +29,51 @@ namespace TimeTable.Services
                 return Guid.Empty;
            return await _lessonRepository.Add(lesson);
         }
-        public async Task<Guid> AddWithRepeat(Lesson lesson, List<DateTime> days, DateTime startPeriod, DateTime endPeriod)
+        public async Task<Guid> AddWithRepeats(Lesson lesson, List<DateTime> days, DateOnly startPeriod, DateOnly endPeriod)
         {
-            var startTime = startPeriod.Date;
-            if (startTime > endPeriod)
-            {
-                var time = startTime;
-                startTime = endPeriod;
-                endPeriod = time;
-            }
+            if (startPeriod > endPeriod)
+                return Guid.Empty;
+            var startTime = startPeriod;
             List<Lesson> lessonsToAdd = new();
             while(startTime < endPeriod)
             {
-                foreach(var day in days)
-                {
-                    var time = startTime;
-                    if ((double)time.DayOfWeek < (double)day.DayOfWeek)
-                        time = time.AddDays((double)day.DayOfWeek - (double)time.DayOfWeek);
-                    else
-                        time = time.AddDays(week - ((double)time.DayOfWeek - (double)day.DayOfWeek));
-                    if (time > endPeriod) 
-                        break;
-
-                    // Lesson currentLesson = lesson.Clone();
-                    // currentLesson.Id = Guid.NewGuid();
-                    // currentLesson.Date = time;
-                    // lessonsToAdd.Add(currentLesson);
-
-                    lesson.StartTime = lesson.StartTime;
-                    lesson.EndTime = lesson.EndTime;
-                    lesson.Id=Guid.NewGuid();
-                    await _lessonRepository.Add(lesson);
-
-                }
-                startTime = startTime.AddDays(week);
+                startTime = ForEach(lessonsToAdd, lesson, days, startTime, endPeriod);
             }
             await _lessonRepository.AddList(lessonsToAdd);
             return lesson.Id;
+        }
+        private DateOnly ForEach(List<Lesson> lessons, Lesson lesson, List<DateTime> days, DateOnly startTime, DateOnly endPeriod)
+        {
+            foreach (var day in days)
+            {
+                var time = Offset(startTime, day);
+                if (time > endPeriod)
+                    continue;
+                 AddWithOffset(lessons,lesson, time);
+            }
+            return startTime.AddDays(week);
+        }
+        private DateOnly Offset(DateOnly startTime, DateTime day)
+        {
+            var time = startTime;
+            var dayBefore = time.AddDays((int)day.DayOfWeek - (int)time.DayOfWeek);
+            var dayAfter = time.AddDays(week - ((int)time.DayOfWeek - (int)day.DayOfWeek));
+            time = (double)time.DayOfWeek <= (double)day.DayOfWeek 
+                ? dayBefore 
+                : dayAfter;
+            return time;
+        }
+        private void AddWithOffset(List<Lesson> lessons, Lesson lesson, DateOnly time)
+        {
+            lesson.Date = time;
+            lesson.Id = Guid.NewGuid();
+            lessons.Add(lesson.Clone());
         }
         public async Task<Guid> Delete(Guid id)
         {
             return await _lessonRepository.Delete(id);
         }
-        public async Task<Guid> Update(Guid id, string subject, Guid userId, string className, Guid taskId, DateOnly date, TimeOnly startTime, TimeOnly endtime)
+        public async Task<Guid> Update(Guid id, string? subject, Guid? userId, string? className, Guid? taskId, DateOnly? date, TimeOnly? startTime, TimeOnly? endtime)
         {
             return await _lessonRepository.Update(id, subject, userId, className, taskId, date, startTime, endtime);
         }
