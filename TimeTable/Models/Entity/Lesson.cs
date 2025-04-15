@@ -4,6 +4,19 @@ namespace TimeTable.Models.Entity
 {
     public class Lesson
     {
+        public Lesson Clone()
+        {
+            Lesson output = new Lesson();
+            output.Id = Id;
+            output.Subject = Subject;
+            output.UserId = UserId;
+            output.ClassName = ClassName;
+            output.TaskID = TaskID;
+            output.Date = Date;
+            output.StartTime = StartTime;
+            output.EndTime = EndTime;
+            return output;
+        }
         public Guid Id { get; set; }
         public string Subject { get; set; }
         public Guid UserId { get; set; }

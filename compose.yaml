@@ -1,19 +1,7 @@
 services:
-  server:
-    image: microservice-schedule:latest
-    container_name: microservice-schedule
-    ports:
-      - 8001:8001
-    environment:
-      - ASPNETCORE_HTTP_PORTS=8001
-      - ASPNETCORE_ENVIRONMENT=Development
-    stdin_open: true
-    tty: true
-    build:
-      context: .
-      target: final
   db:
     image: postgres:16-alpine
+    container_name: microservice-schedule--db-1
     restart: always
     env_file:
       - path: ./Secrets/pass.env
@@ -24,6 +12,7 @@ services:
       - 5432:5432
   kafka:
     image: apache/kafka-native
+    container_name: microservice-schedule--kafka
     ports:
       - 9092:9092
       - 9093:9093
@@ -46,6 +35,7 @@ services:
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
   kafka-ui:
     image: kafbat/kafka-ui:main
+    container_name: microservice-schedule--kafka-ui
     ports:
       - 8080:8080
     environment:
