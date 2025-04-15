@@ -27,7 +27,7 @@ namespace TimeTable.Services
         public async Task<Guid?> Add(Lesson lesson)
         {
             if (lesson.StartTime > lesson.EndTime) 
-                return Guid.Empty;
+                return null;
            return await _lessonRepository.Add(lesson);
         }
         public async Task<Guid> AddWithRepeat(Lesson lesson, List<DateTime> days, DateTime startPeriod, DateTime endPeriod)
