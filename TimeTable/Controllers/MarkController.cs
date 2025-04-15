@@ -30,12 +30,16 @@ namespace TimeTable.Controllers
 
             var kafkaEvent = new
             {
-                date = Date,
-                teacherID = TeacherID,
-                studentId = StudentID,
-                comment = Comment,
-                lessonId = LessonID,
-                mark = Mark,
+                marks = new[]
+                {
+                    new
+                    {
+                        user_id = StudentID,
+                        mark = Mark.ToString(), 
+                        comment = Comment 
+                    }
+                },
+                lesson_id = LessonID 
             };
             string jsonMessage = System.Text.Json.JsonSerializer.Serialize(kafkaEvent);
             return await _kafkaModule.CreateEventInKafka("VALERA-LOX", jsonMessage);
