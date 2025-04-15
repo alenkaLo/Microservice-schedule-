@@ -13,10 +13,11 @@ public class TaskConsumer : ConsumerBase
             if (lessonRepository is LessonRepository)
                 _lessonRepository = lessonRepository as LessonRepository;
         }
-        _topic = "VALERA-LOX";
+        _topic = "mark-topic";
     }
     public override async void ProcessingMessage(string Message)
     {
+        Console.WriteLine("УЙ");
         try
         {
             var jsonObject = Newtonsoft.Json.Linq.JObject.Parse(Message);
