@@ -42,7 +42,7 @@ namespace TimeTable.Controllers
                 lesson_id = LessonID 
             };
             string jsonMessage = System.Text.Json.JsonSerializer.Serialize(kafkaEvent);
-            return await _kafkaModule.CreateEventInKafka("VALERA-LOX", jsonMessage);
+            return await _kafkaModule.CreateEventInKafka("mark-topic", jsonMessage);
         }
     }
 }
