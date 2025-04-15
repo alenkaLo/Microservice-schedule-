@@ -39,6 +39,7 @@ namespace TimeTable.Services
                 startTime = endPeriod;
                 endPeriod = time;
             }
+            List<Lesson> lessonsToAdd = new();
             while(startTime < endPeriod)
             {
                 foreach(var day in days)
@@ -50,13 +51,21 @@ namespace TimeTable.Services
                         time = time.AddDays(week - ((double)time.DayOfWeek - (double)day.DayOfWeek));
                     if (time > endPeriod) 
                         break;
+
+                    // Lesson currentLesson = lesson.Clone();
+                    // currentLesson.Id = Guid.NewGuid();
+                    // currentLesson.Date = time;
+                    // lessonsToAdd.Add(currentLesson);
+
                     lesson.StartTime = lesson.StartTime;
                     lesson.EndTime = lesson.EndTime;
                     lesson.Id=Guid.NewGuid();
                     await _lessonRepository.Add(lesson);
+
                 }
                 startTime = startTime.AddDays(week);
             }
+            await _lessonRepository.AddList(lessonsToAdd);
             return lesson.Id;
         }
         public async Task<Guid> Delete(Guid id)
