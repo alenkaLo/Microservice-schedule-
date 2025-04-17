@@ -26,11 +26,13 @@
 ### Первичный запуск
 0. Установить Docker Desktop: https://desktop.docker.com/win/main/amd64/Docker%20Desktop%20Installer.exe
 
-1. Склонировать репозиторий, зайти в папку с файлом compose.yaml
+   	#### Если не удастся запустить Docker Desktop из-за ошибки с WSL/WSL2, перейти к "Первичный запуск без kafka и docker" ниже
+
+2. Склонировать репозиторий, зайти в папку с файлом compose.yaml
 
 	`git clone https://github.com/alenkaLo/Microservice-schedule-.git`
 
-2. В папке Secrets создать файл pass.env с таким содержимым
+3. В папке Secrets создать файл pass.env с таким содержимым
 
    	`POSTGRES_PASSWORD=[ТУТ ПАРОЛЬ К БД]`
 	
@@ -38,19 +40,19 @@
 	
  	`POSTGRES_DB=postgres`
 
-3. Запустить контейнер с PostgreSQL и kafka (Docker Desktop должен быть включён)
+4. Запустить контейнер с PostgreSQL и kafka (Docker Desktop должен быть включён)
 
 	`docker-compose up -d`
 
-4. Проверить, что БД работает
+5. Проверить, что БД работает
 
 	`docker ps`
 
-5. Инициализировать базу данных (только при первом запуске)
+6. Инициализировать базу данных (только при первом запуске)
 
 	`docker exec -i microservice-schedule--db-1 psql -U postgres -f init.sql`
 
-6. Теперь можно запускать проект через Visual Studio, http://localhost:5233/swagger/
+7. Теперь можно запускать проект через Visual Studio, http://localhost:5233/swagger/
 
 ### Повторный запуск после перезапуска ПК
 
@@ -63,9 +65,21 @@
 В дальнейшем можно включать/выключать контейнер `docker-compose up -d`/`docker-compose down`. Данные будут храниться в папке `pgdata`, которая создается при запуске контейнера.
 
 ### Возможные проблемы
+
  - Если при запуске БД ошибка "Error response from daemon: Container is restarting, wait until the container is running", то убедиться, что Docker Desktop включен, затем перезапустить контейнер:
 
 	`docker-compose down`
 	
 	`docker-compose up -d`
  - Если при запросах через Swagger ошибки с типами данных, возможно локальная база данных устарела. Нужно удалить папку pgdata и повторить шаги 3-6 из первичного запуска
+
+### Первичный запуск без kafka и Docker
+
+0. Установить PostgreSQL 16.8: https://get.enterprisedb.com/postgresql/postgresql-16.8-1-windows-x64.exe
+
+	- При установке выбрать такой же пароль к БД, как на сервере, имя пользователя, порт, название БД оставить по умолчанию, путь установки по умолчанию
+ 	- При выборе компонентов обязательно выбрать PostgreSQL Server и Command Line Tools
+
+1. Инициализировать БД через скрипт Scripts/init_db.bat
+
+2. Теперь можно запускать проект через Visual Studio
