@@ -29,20 +29,19 @@ namespace TimeTable.Services
                 return Guid.Empty;
            return await _lessonRepository.Add(lesson);
         }
-        public async Task<Guid> AddWithRepeats(Lesson lesson, List<DateTime> days, DateOnly startPeriod, DateOnly endPeriod)
+        public async Task<Guid[]> AddWithRepeats(Lesson lesson, List<DayOfWeek> days, DateOnly startPeriod, DateOnly endPeriod)
         {
             if (startPeriod > endPeriod)
-                return Guid.Empty;
+                return Array.Empty<Guid>();
             var startTime = startPeriod;
             List<Lesson> lessonsToAdd = new();
             while(startTime < endPeriod)
             {
                 startTime = ForEach(lessonsToAdd, lesson, days, startTime, endPeriod);
             }
-            await _lessonRepository.AddList(lessonsToAdd);
-            return lesson.Id;
+           return await _lessonRepository.AddList(lessonsToAdd);
         }
-        private DateOnly ForEach(List<Lesson> lessons, Lesson lesson, List<DateTime> days, DateOnly startTime, DateOnly endPeriod)
+        private DateOnly ForEach(List<Lesson> lessons, Lesson lesson, List<DayOfWeek> days, DateOnly startTime, DateOnly endPeriod)
         {
             foreach (var day in days)
             {
@@ -53,12 +52,12 @@ namespace TimeTable.Services
             }
             return startTime.AddDays(week);
         }
-        private DateOnly Offset(DateOnly startTime, DateTime day)
+        private DateOnly Offset(DateOnly startTime, DayOfWeek day)
         {
             var time = startTime;
-            var dayBefore = time.AddDays((int)day.DayOfWeek - (int)time.DayOfWeek);
-            var dayAfter = time.AddDays(week - ((int)time.DayOfWeek - (int)day.DayOfWeek));
-            time = (double)time.DayOfWeek <= (double)day.DayOfWeek 
+            var dayBefore = time.AddDays((int)day - (int)time.DayOfWeek);
+            var dayAfter = time.AddDays(week - ((int)time.DayOfWeek - (int)day));
+            time = (double)time.DayOfWeek <= (double)day 
                 ? dayBefore 
                 : dayAfter;
             return time;
