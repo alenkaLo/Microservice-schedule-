@@ -26,7 +26,7 @@
 ### Первичный запуск
 0. Установить Docker Desktop: https://desktop.docker.com/win/main/amd64/Docker%20Desktop%20Installer.exe
 
-1. Склонировать репозиторий, зайти в папку с файлом compose.yml
+1. Склонировать репозиторий, зайти в папку с файлом compose.yaml
 
 	`git clone https://github.com/alenkaLo/Microservice-schedule-.git`
 
@@ -54,7 +54,7 @@
 
 ### Повторный запуск после перезапуска ПК
 
-1. В папке с файлом compose.yml запустить контейнер с PostgreSQL и kafka (Docker Desktop должен быть включён)
+1. В папке с файлом compose.yaml запустить контейнер с PostgreSQL и kafka (Docker Desktop должен быть включён)
 
 	`docker-compose up -d`
 
