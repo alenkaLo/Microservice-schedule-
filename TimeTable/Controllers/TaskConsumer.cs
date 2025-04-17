@@ -1,89 +1,37 @@
 ﻿using Confluent.Kafka;
-using System.Threading;
-using TimeTable.Models.Entity;
 using TimeTable.Models.Repository;
-using static Confluent.Kafka.ConfigPropertyNames;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
-namespace TimeTable.Controllers
+
+public class TaskConsumer : ConsumerBase
 {
-    public class TaskConsumer : IDisposable
+    private LessonRepository _lessonRepository;
+    public TaskConsumer(IConsumer<Ignore, string> consumer, IServiceScopeFactory scopeFactory) : base(consumer, scopeFactory)
     {
-        private readonly ConsumerConfig _config;
-        private readonly string _topic;
-        private readonly IConsumer<Ignore, string> _consumer;
-        private readonly LessonRepository _lessonRepository;
-        private bool _disposed;
-
-        public TaskConsumer(LessonRepository lessonRepository, ConsumerConfig config = null, string topic = "task")
+        using (var scope = _scopeFactory.CreateScope())
         {
-            _config = config ?? new ConsumerConfig
-            {
-                BootstrapServers = "localhost:9092",
-                GroupId = "my-group",
-                AutoOffsetReset = AutoOffsetReset.Earliest
-            };
-
-            _topic = topic;
-            _lessonRepository = lessonRepository;
-            _consumer = new ConsumerBuilder<Ignore, string>(_config).Build();
-            _consumer.Subscribe(_topic);
-
+            var lessonRepository = scope.ServiceProvider.GetRequiredService<ILessonRepository>();
+            if (lessonRepository is LessonRepository)
+                _lessonRepository = lessonRepository as LessonRepository;
         }
-
-        public async Task Consume(CancellationToken cancellationToken = default)
+        _topic = "mark-topic";
+    }
+    public override async void ProcessingMessage(string Message)
+    {
+        Console.WriteLine("УЙ");
+        try
         {
-            try
-            {
-                while (!cancellationToken.IsCancellationRequested)
-                {
-                    try
-                    {
-                        var package = _consumer.Consume(cancellationToken);
-                        HandleMessage(package.Message.Value);
-                    }
-                    catch (ConsumeException e)
-                    {
-                        Console.WriteLine($"Error consuming message: {e.Error.Reason}");
-                    }
-                }
-            }
-            finally
-            {
-                _consumer.Close();
-            }
+            var jsonObject = Newtonsoft.Json.Linq.JObject.Parse(Message);
+            Guid taskId = Guid.Parse(jsonObject["task_id"]?.ToString());
+            Guid lessonId = Guid.Parse(jsonObject["lesson_id"]?.ToString());
+            await _lessonRepository.Update(lessonId, taskId: taskId);
         }
-
-        private async Task HandleMessage(string message)
+        catch (Exception ex)
         {
-            try
-            {
-                // Десериализация JSON-сообщения
-                var jsonObject = Newtonsoft.Json.Linq.JObject.Parse(message);
-
-                // Извлечение task_id и lesson_id
-                Guid taskId = Guid.Parse(jsonObject["task_id"]?.ToString());
-                Guid lessonId = Guid.Parse(jsonObject["lesson_id"]?.ToString());
-
-                await _lessonRepository.Update(lessonId, taskId: taskId);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error processing message: {ex.Message}");
-            }
+            Console.WriteLine($"Error processing message: {ex.Message}");
         }
-        public void Dispose()
-        {
-            if (!_disposed)
-            {
-                _consumer?.Dispose();
-                _disposed = true;
-            }
-            GC.SuppressFinalize(this);
-        }
-
     }
 }
 
-    
+
+
 
