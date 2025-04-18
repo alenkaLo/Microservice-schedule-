@@ -1,9 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Update.Internal;
 using TimeTable.Data;
-using TimeTable.Models.Entity;
 using TimeTable.Logging;
+using TimeTable.Models.Entity;
 
 namespace TimeTable.Models.Repository
 {
@@ -20,7 +18,8 @@ namespace TimeTable.Models.Repository
         {
             return await _dbContext.Lessons
                 .AsNoTracking()
-                .OrderBy(l => l.StartTime)
+                .OrderBy(l => l.Date)
+                .ThenBy(l => l.StartTime)
                 .ToListAsync();
         }
 
@@ -31,37 +30,53 @@ namespace TimeTable.Models.Repository
                 .FirstOrDefaultAsync(l => l.Id == id);
         }
 
-        public async Task<Guid?> Add(Lesson lesson)
+        public async Task<Guid> Add(Lesson lesson)
         {
-            Guid? id = lesson.Id;
             try
             {
+                if (lesson.Id == Guid.Empty) lesson.Id = Guid.NewGuid();
                 await _dbContext.Lessons.AddAsync(lesson);
-                await _dbContext.SaveChangesAsync();
+                _dbContext.SaveChanges();//TODO Nikita await _dbContext.SaveChangesAsync() 
+                return lesson.Id;
             }
             catch
             {
-                id = null;
+                return Guid.Empty;
             }
-
-            return id;
         }
-        
-        public async Task<Guid?> Delete(Guid id)
+        public async Task<Guid[]> AddList(List<Lesson> lessons)
+        {
+            if (lessons == null || !lessons.Any())
+            {
+                // Возвращаем пустой Guid, если список null или пустой
+                return Array.Empty<Guid>();
+            }
+            await _dbContext.Lessons.AddRangeAsync(lessons);
+            _dbContext.SaveChanges();
+
+            // Возвращаем ID первого урока в списке
+            // (или можно выбрать другую логику возврата)
+            List<Guid> ids = new List<Guid>();
+            foreach (var lesson in lessons)
+            {
+                ids.Add(lesson.Id);
+            }
+            return ids.ToArray();
+        }
+        public async Task<Guid> Delete(Guid id)
         {
             var query = _dbContext.Lessons.Where(x => x.Id == id);
 
             if (!query.Any())
             {
                 ConsoleLogger.Logger.LogInformation($"Объект {id} для удаления не найден");
-                return null;
+                return Guid.Empty;
             }
 
             await query.ExecuteDeleteAsync();
             return id;
         }
-
-        public async Task<Guid?> Update(
+        public async Task<Guid> Update(
             Guid id,
             string? subject = null,
             Guid? userId = null,
@@ -76,7 +91,7 @@ namespace TimeTable.Models.Repository
             if (!query.Any())
             {
                 ConsoleLogger.Logger.LogInformation($"Объект {id} для обновления не найден");
-                return null;
+                return Guid.Empty;
             }
 
             await query.ExecuteUpdateAsync(s => s
@@ -90,7 +105,6 @@ namespace TimeTable.Models.Repository
 
             return id;
         }
-
         public async Task<List<Lesson>> GetAllForPeriod(TimeOnly startTime, TimeOnly endTime, DateOnly startDate, DateOnly endDate)
         {
             return await _dbContext.Lessons
