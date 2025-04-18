@@ -19,6 +19,7 @@ namespace TimeTable.Models.Repository
             return await _dbContext.Lessons
                 .AsNoTracking()
                 .OrderBy(l => l.Date)
+                .ThenBy(l => l.StartTime)
                 .ToListAsync();
         }
 

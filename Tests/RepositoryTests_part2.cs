@@ -12,10 +12,10 @@ public partial class LessonRepositoryTests
 
         // Act
         var result = await _repository.GetAll();
-        var sorted = result.OrderBy(x => x.StartTime).ToList();
+        var sorted = result.OrderBy(x => x.Date).ThenBy(x => x.StartTime).ToList();
 
         // Assert
-        Assert.AreEqual(3, result.Count);
+        Assert.AreEqual(6, result.Count);
         CollectionAssert.AreEqual(sorted, result);
     }
 
