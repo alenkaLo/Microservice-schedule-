@@ -41,8 +41,8 @@ namespace TimeTable.Controllers
 
         [HttpPost]
         public async Task<ActionResult> Create(LessonWithOutID lessonWithoutID)
-        { 
-            Lesson lesson= new Lesson();
+        {
+            Lesson lesson = new Lesson();
             lesson.Subject = lessonWithoutID.Subject;
             lesson.UserId = lessonWithoutID.UserId;
             lesson.ClassName = lessonWithoutID.ClassName;
@@ -57,7 +57,7 @@ namespace TimeTable.Controllers
                 return new JsonResult(BadRequest());
         }
 
-        [HttpPost("CreateWithRepeat")]
+        [HttpPost("CreateWithRepeats{startPeriod:DateTime}")]
         public async Task<ActionResult> CreateWithRepeats([FromBody]LessonWithOutIDnDate lessonWithoutDate, [FromQuery] List<DayOfWeek> days, DateOnly startPeriod, DateOnly endPeriod)
         {
             Lesson lesson = new Lesson();
@@ -68,7 +68,10 @@ namespace TimeTable.Controllers
             lesson.StartTime=lessonWithoutDate.StartTime;
             lesson.EndTime=lessonWithoutDate.EndTime;
             var result = await _lessonService.AddWithRepeats(lesson, days, startPeriod, endPeriod);
-            return Ok(result);
+            if (result != Array.Empty<Guid>())
+                return Ok(result);
+            else
+                return new JsonResult(BadRequest());
         }
         [HttpPut("{id:guid}")]
         public async Task<ActionResult> Update(Guid id, string? subject, Guid? userId, string? className, Guid? taskId, DateOnly? date, TimeOnly? startTime, TimeOnly? endtime)
