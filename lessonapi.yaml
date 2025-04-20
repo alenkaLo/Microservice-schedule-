@@ -1,296 +1,461 @@
-openapi: 3.0.4
+openapi: 3.0.1
 info:
-  title: Расписание
-  description: 
-    Сервис Расписания.
-  version: 0.1.0
-servers:
-  - url: toDo
-tags:
-  - name: Расписание
-    description: Получение расписания
-  - name: Уроки
-    description: Редактирование уроков
+  title: TimeTable
+  version: '1.0'
 paths:
-  /schedule:
+  /Lesson/{id}:
     get:
       tags:
-        - Расписание
-      summary: Получение сводного расписания.
-      description: Получение сводного расписания за выбранный период.
-      parameters:
-        - name: period
-          in: query
-          required: true
-          schema:
-            $ref: '#/components/schemas/period'
-      responses: 
-        "200": 
-          description: Сводное расписание на неделю.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/schedule'
-        "400": 
-          description: неверные параметры запроса
-        '412':
-          description: начало урока позже конца
-                
-  /schedule/user:
-    get:
-      tags:
-        - Расписание
-      summary: Получение расписания пользователя.
-      description: Получение расписания пользователя за выбранный период.
+        - Lesson
       parameters:
         - name: id
-          in: query
+          in: path
           required: true
           schema:
             type: string
-        - name: period
-          in: query
-          required: true
-          schema:
-            $ref: '#/components/schemas/period'
-      responses:
-        "200": 
-          description: Сводное расписание на неделю.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/schedule'
-        "400": 
-          description: неверные параметры запроса
-        '404':
-          description: расписание не найдено
-        '412':
-          description: начало урока позже конца
-    
-  /schedule/class:
-    get:
-      tags:
-        - Расписание
-      summary: Получение расписания класса.
-      description: Получение расписания пользователя за выбранный период.
-      parameters:
-        - name: className
-          in: query
-          required: true
-          schema:
-            type: string
-        - name: period
-          in: query
-          required: true
-          schema:
-            $ref: '#/components/schemas/period'
-      responses:
-        "200": 
-          description: Сводное расписание на неделю.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/schedule'
-        "400": 
-          description: неверные параметры запроса
-        '404':
-          description: расписание не найдено
-        '412':
-          description: начало урока позже конца  
-          
-  /lesson:
-
-    get:
-      tags:
-        - Уроки
-      summary: Получение урока.
-      description: Получение урока по id урока.
-      parameters:
-        - name: id
-          in: query
-          required: true
-          schema:
-            type: string
-      responses: 
-        "200": 
-          description: Информация о уроке.
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/lesson"
-        "400": 
-          description: неверные параметры запроса
-        '412':
-          description: начало урока позже конца
-          
-    post:
-      tags:
-        - Уроки
-      summary: Добавить урок.
-      parameters:
-        - name: Данные урока.
-          in: query
-          required: true
-          schema:
-            $ref: "#/components/schemas/lessons"
-      responses:
-        "200": 
-          description: урок сохранен
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/lessonCreate'
-    delete:
-      tags:
-        - Уроки
-      summary: Удалить урок.
-      parameters:
-        - name: id
-          in: query
-          required: true
-          schema:
-            type: string
+            format: uuid
       responses:
         '200':
-          description: урок удален
-        "400": 
-          description: неверные параметры запроса
-        '404':
-          description: урок не найден
-        
-          
+          description: Success
+          content:
+            text/plain:
+              schema:
+                $ref: '#/components/schemas/LessonResponse'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LessonResponse'
+            text/json:
+              schema:
+                $ref: '#/components/schemas/LessonResponse'
     put:
       tags:
-        - Уроки
-      summary: Изменить урок.
+        - Lesson
       parameters:
         - name: id
-          in: query
+          in: path
           required: true
           schema:
             type: string
-        - name: Данные урока.
+            format: uuid
+        - name: subject
           in: query
-          required: true
           schema:
-            $ref: "#/components/schemas/lessons"
-      responses:
-        "200": 
-          description: изменения сохранены
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/lessonCreate'
-        "400": 
-          description: неверные параметры запроса
-        '404':
-          description: урок не найден
-                
-  /mark:
-    post:
-      tags:
-        - Оценки
-      summary: Выставить оценку.
-      parameters:
-        - name: Данные оценки.
+            type: string
+        - name: userId
           in: query
-          required: true
           schema:
-            $ref: "#/components/schemas/mark"
+            type: string
+            format: uuid
+        - name: className
+          in: query
+          schema:
+            type: string
+        - name: taskId
+          in: query
+          schema:
+            type: string
+            format: uuid
+        - name: date
+          in: query
+          schema:
+            $ref: '#/components/schemas/DateOnly'
+        - name: startTime
+          in: query
+          schema:
+            $ref: '#/components/schemas/TimeOnly'
+        - name: endtime
+          in: query
+          schema:
+            $ref: '#/components/schemas/TimeOnly'
       responses:
         '200':
-          description: оценка выставлена
-        "400": 
-          description: неверные параметры запроса
-        '412':
-          description: учитель не имеет право высталять оценки за этот предмет
-        
-        
+          description: Success
+    delete:
+      tags:
+        - Lesson
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Success
+  /Lesson:
+    get:
+      tags:
+        - Lesson
+      responses:
+        '200':
+          description: Success
+          content:
+            text/plain:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/LessonResponse'
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/LessonResponse'
+            text/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/LessonResponse'
+    post:
+      tags:
+        - Lesson
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LessonWithOutID'
+          text/json:
+            schema:
+              $ref: '#/components/schemas/LessonWithOutID'
+          application/*+json:
+            schema:
+              $ref: '#/components/schemas/LessonWithOutID'
+      responses:
+        '200':
+          description: Success
+  /Lesson/CreateWithRepeat:
+    post:
+      tags:
+        - Lesson
+      parameters:
+        - name: days
+          in: query
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/DayOfWeek'
+        - name: startPeriod
+          in: query
+          schema:
+            $ref: '#/components/schemas/DateOnly'
+        - name: endPeriod
+          in: query
+          schema:
+            $ref: '#/components/schemas/DateOnly'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LessonWithOutIDnDate'
+          text/json:
+            schema:
+              $ref: '#/components/schemas/LessonWithOutIDnDate'
+          application/*+json:
+            schema:
+              $ref: '#/components/schemas/LessonWithOutIDnDate'
+      responses:
+        '200':
+          description: Success
+  /Mark:
+    post:
+      tags:
+        - Mark
+      parameters:
+        - name: Date
+          in: query
+          schema:
+            type: string
+            format: date-time
+        - name: TeacherID
+          in: query
+          schema:
+            type: string
+            format: uuid
+        - name: StudentID
+          in: query
+          schema:
+            type: string
+            format: uuid
+        - name: Comment
+          in: query
+          schema:
+            type: string
+        - name: LessonID
+          in: query
+          schema:
+            type: string
+            format: uuid
+        - name: Mark
+          in: query
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: Success
+  /Schedule:
+    get:
+      tags:
+        - Schedule
+      parameters:
+        - name: startTime
+          in: query
+          schema:
+            $ref: '#/components/schemas/TimeOnly'
+        - name: endTime
+          in: query
+          schema:
+            $ref: '#/components/schemas/TimeOnly'
+        - name: startDate
+          in: query
+          schema:
+            $ref: '#/components/schemas/DateOnly'
+        - name: endDate
+          in: query
+          schema:
+            $ref: '#/components/schemas/DateOnly'
+      responses:
+        '200':
+          description: Success
+          content:
+            text/plain:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/LessonResponse'
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/LessonResponse'
+            text/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/LessonResponse'
+  /Schedule/user/{id}:
+    get:
+      tags:
+        - Schedule
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: startTime
+          in: query
+          schema:
+            $ref: '#/components/schemas/TimeOnly'
+        - name: endTime
+          in: query
+          schema:
+            $ref: '#/components/schemas/TimeOnly'
+        - name: startDate
+          in: query
+          schema:
+            $ref: '#/components/schemas/DateOnly'
+        - name: endDate
+          in: query
+          schema:
+            $ref: '#/components/schemas/DateOnly'
+      responses:
+        '200':
+          description: Success
+          content:
+            text/plain:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/LessonResponse'
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/LessonResponse'
+            text/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/LessonResponse'
+  /Schedule/class/{className}:
+    get:
+      tags:
+        - Schedule
+      parameters:
+        - name: className
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: startTime
+          in: query
+          schema:
+            $ref: '#/components/schemas/TimeOnly'
+        - name: endTime
+          in: query
+          schema:
+            $ref: '#/components/schemas/TimeOnly'
+        - name: startDate
+          in: query
+          schema:
+            $ref: '#/components/schemas/DateOnly'
+        - name: endDate
+          in: query
+          schema:
+            $ref: '#/components/schemas/DateOnly'
+      responses:
+        '200':
+          description: Success
+          content:
+            text/plain:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/LessonResponse'
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/LessonResponse'
+            text/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/LessonResponse'
 components:
   schemas:
-    lesson:
+    DateOnly:
+      type: object
+      properties:
+        year:
+          type: integer
+          format: int32
+        month:
+          type: integer
+          format: int32
+        day:
+          type: integer
+          format: int32
+        dayOfWeek:
+          $ref: '#/components/schemas/DayOfWeek'
+        dayOfYear:
+          type: integer
+          format: int32
+          readOnly: true
+        dayNumber:
+          type: integer
+          format: int32
+          readOnly: true
+      additionalProperties: false
+    DayOfWeek:
+      enum:
+        - 0
+        - 1
+        - 2
+        - 3
+        - 4
+        - 5
+        - 6
+      type: integer
+      format: int32
+    LessonResponse:
       type: object
       properties:
         id:
           type: string
+          format: uuid
         subject:
           type: string
-        startTime: 
-          type: string
-        endTime: 
-          type: string
-        date:
-          type: string
-        className:
-          type: string
+          nullable: true
         userId:
           type: string
-        task:
+          format: uuid
+        className:
           type: string
-          
-    lessons:
+          nullable: true
+        taskID:
+          type: string
+          format: uuid
+        date:
+          $ref: '#/components/schemas/DateOnly'
+        startTime:
+          $ref: '#/components/schemas/TimeOnly'
+        endTime:
+          $ref: '#/components/schemas/TimeOnly'
+      additionalProperties: false
+    LessonWithOutID:
       type: object
       properties:
         subject:
           type: string
-        startTime: 
-          type: string
-        endTime: 
-          type: string
-        startDate:
-          type: string
-        endDate:
-          type: string
-        date:
-          type: array
-          items:
-            type: string
-        className:
-          type: string
+          nullable: true
         userId:
           type: string
-        
-    schedule:
+          format: uuid
+        className:
+          type: string
+          nullable: true
+        taskID:
+          type: string
+          format: uuid
+          nullable: true
+        date:
+          $ref: '#/components/schemas/DateOnly'
+        startTime:
+          $ref: '#/components/schemas/TimeOnly'
+        endTime:
+          $ref: '#/components/schemas/TimeOnly'
+      additionalProperties: false
+    LessonWithOutIDnDate:
       type: object
       properties:
-        lessons:
-          type: array
-          items:
-            type: object
-            $ref: '#/components/schemas/lesson'
-          
-    period:
+        subject:
+          type: string
+          nullable: true
+        userId:
+          type: string
+          format: uuid
+        className:
+          type: string
+          nullable: true
+        taskID:
+          type: string
+          format: uuid
+          nullable: true
+        startTime:
+          $ref: '#/components/schemas/TimeOnly'
+        endTime:
+          $ref: '#/components/schemas/TimeOnly'
+      additionalProperties: false
+    TimeOnly:
       type: object
       properties:
-        startTime: 
-          type: string
-        endTime: 
-          type: string
-        startDate:
-          type: string
-        endDate:
-          type: string
-        
-    lessonCreate:
-      type: object
-      properties:
-        id:
-          type: array
-          items:
-            type: string
-        
-    mark:
-      type: object
-      properties:
-        date: 
-          type: string
-        teacherId:
-          type: string
-        userid:
-          type: string
-        comment:
-          type: string
-        lessonid:
-          type: string
-        mark:
-          type: string
+        hour:
+          type: integer
+          format: int32
+        minute:
+          type: integer
+          format: int32
+        second:
+          type: integer
+          format: int32
+          readOnly: true
+        millisecond:
+          type: integer
+          format: int32
+          readOnly: true
+        microsecond:
+          type: integer
+          format: int32
+          readOnly: true
+        nanosecond:
+          type: integer
+          format: int32
+          readOnly: true
+        ticks:
+          type: integer
+          format: int64
+          readOnly: true
+      additionalProperties: false
