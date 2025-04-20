@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using TimeTable.Services;
 using TimeTable.Contracts;
+using TimeTable.Models.Entity;
 
 namespace TimeTable.Controllers
 {
@@ -16,9 +17,9 @@ namespace TimeTable.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<LessonResponse>>> Get(TimeOnly startTime, TimeOnly endTime, DateOnly startDate, DateOnly endDate)
+        public async Task<ActionResult<List<LessonResponse>>> Get([FromQuery]Period period)
         {
-            var result = await _lessonService.GetAllForPeriod(startTime, endTime, startDate, endDate);
+            var result = await _lessonService.GetAllForPeriod(period);
             if (result is null)
                 return NotFound();
 
@@ -26,9 +27,9 @@ namespace TimeTable.Controllers
         }
 
         [HttpGet("user/{id}")]
-        public async Task<ActionResult<List<LessonResponse>>> GetUserSchedule(Guid id, TimeOnly startTime, TimeOnly endTime, DateOnly startDate, DateOnly endDate)
+        public async Task<ActionResult<List<LessonResponse>>> GetUserSchedule(Guid id, [FromQuery] Period period)
         {
-            var result = await _lessonService.GetUserSchedule(id, startTime, endTime, startDate, endDate);
+            var result = await _lessonService.GetUserSchedule(id, period);
             if (result is null)
                 return NotFound();
     
@@ -36,9 +37,9 @@ namespace TimeTable.Controllers
         } 
 
         [HttpGet("class/{className}")]
-        public async Task<ActionResult<List<LessonResponse>>> GetClassSchedule(string className, TimeOnly startTime, TimeOnly endTime, DateOnly startDate, DateOnly endDate)
+        public async Task<ActionResult<List<LessonResponse>>> GetClassSchedule(string className, [FromQuery] Period period)
         {
-            var result = await _lessonService.GetClassSchedule(className, startTime, endTime, startDate, endDate);
+            var result = await _lessonService.GetClassSchedule(className, period);
             if (result is null)
                 return NotFound();
             
