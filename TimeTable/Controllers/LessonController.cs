@@ -2,6 +2,8 @@
 using TimeTable.Models.Entity;
 using TimeTable.Services;
 using TimeTable.Contracts;
+using static System.Runtime.InteropServices.JavaScript.JSType;
+using System.Threading.Tasks;
 
 namespace TimeTable.Controllers
 {
@@ -38,8 +40,16 @@ namespace TimeTable.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> Create(Lesson lesson)
-        { 
+        public async Task<ActionResult> Create(LessonWithOutID lessonWithoutID)
+        {
+            Lesson lesson = new Lesson();
+            lesson.Subject = lessonWithoutID.Subject;
+            lesson.UserId = lessonWithoutID.UserId;
+            lesson.ClassName = lessonWithoutID.ClassName;
+            lesson.TaskID = lessonWithoutID.TaskID;
+            lesson.Date = lessonWithoutID.Date;
+            lesson.StartTime = lessonWithoutID.StartTime;
+            lesson.EndTime = lessonWithoutID.EndTime;
             var result = await _lessonService.Add(lesson);
             if (result != Guid.Empty)
                 return Ok(result);
@@ -47,11 +57,21 @@ namespace TimeTable.Controllers
                 return new JsonResult(BadRequest());
         }
 
-        [HttpPost("CreateWithRepeat")]
-        public JsonResult CreateWithRepeats([FromBody]Lesson lesson, [FromQuery]List<DateTime> days, DateOnly startPeriod, DateOnly endPeriod)
+        [HttpPost("CreateWithRepeats{startPeriod:DateTime}")]
+        public async Task<ActionResult> CreateWithRepeats([FromBody]LessonWithOutIDnDate lessonWithoutDate, [FromQuery] List<DayOfWeek> days, DateOnly startPeriod, DateOnly endPeriod)
         {
-            _lessonService.AddWithRepeats(lesson, days, startPeriod, endPeriod);
-            return new JsonResult(Ok());
+            Lesson lesson = new Lesson();
+            lesson.Subject=lessonWithoutDate.Subject;
+            lesson.UserId=lessonWithoutDate.UserId;
+            lesson.ClassName=lessonWithoutDate.ClassName;
+            lesson.TaskID=lessonWithoutDate.TaskID;
+            lesson.StartTime=lessonWithoutDate.StartTime;
+            lesson.EndTime=lessonWithoutDate.EndTime;
+            var result = await _lessonService.AddWithRepeats(lesson, days, startPeriod, endPeriod);
+            if (result != Array.Empty<Guid>())
+                return Ok(result);
+            else
+                return new JsonResult(BadRequest());
         }
         [HttpPut("{id:guid}")]
         public async Task<ActionResult> Update(Guid id, string? subject, Guid? userId, string? className, Guid? taskId, DateOnly? date, TimeOnly? startTime, TimeOnly? endtime)

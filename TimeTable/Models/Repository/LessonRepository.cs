@@ -19,6 +19,7 @@ namespace TimeTable.Models.Repository
             return await _dbContext.Lessons
                 .AsNoTracking()
                 .OrderBy(l => l.Date)
+                .ThenBy(l=>l.StartTime)
                 .ToListAsync();
         }
 
@@ -43,19 +44,24 @@ namespace TimeTable.Models.Repository
                 return Guid.Empty;
             }
         }
-        public async Task<Guid> AddList(List<Lesson> lessons)
+        public async Task<Guid[]> AddList(List<Lesson> lessons)
         {
             if (lessons == null || !lessons.Any())
             {
                 // Возвращаем пустой Guid, если список null или пустой
-                return Guid.Empty;
+                return Array.Empty<Guid>();
             }
             await _dbContext.Lessons.AddRangeAsync(lessons);
             _dbContext.SaveChanges();
 
             // Возвращаем ID первого урока в списке
             // (или можно выбрать другую логику возврата)
-            return lessons.First().Id;
+            List<Guid> ids = new List<Guid>();
+            foreach (var lesson in lessons)
+            {
+                ids.Add(lesson.Id);
+            }
+            return ids.ToArray();
         }
         public async Task<Guid> Delete(Guid id)
         {
