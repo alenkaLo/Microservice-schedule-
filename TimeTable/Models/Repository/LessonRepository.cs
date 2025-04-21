@@ -108,10 +108,8 @@ namespace TimeTable.Models.Repository
         public async Task<List<Lesson>> GetAllForPeriod(Period period)
         {
             return await _dbContext.Lessons
-            .Where(l => l.StartTime >= TimeOnly.FromDateTime(period.StartDate))
-            .Where(l => l.EndTime <= TimeOnly.FromDateTime(period.EndDate))
-            .Where(l => l.Date >= DateOnly.FromDateTime(period.StartDate))
-            .Where(l => l.Date <= DateOnly.FromDateTime(period.EndDate))
+            .Where(l => l.Date >= period.StartDate)
+            .Where(l => l.Date <= period.EndDate)
             .OrderBy(l => l.Date)
             .ThenBy(l => l.StartTime)
             .AsNoTracking()
@@ -123,10 +121,8 @@ namespace TimeTable.Models.Repository
         {
             return await _dbContext.Lessons
             .Where(x => x.UserId == userid)
-            .Where(l => l.StartTime >= TimeOnly.FromDateTime(period.StartDate))
-            .Where(l => l.EndTime <= TimeOnly.FromDateTime(period.EndDate))
-            .Where(l => l.Date >= DateOnly.FromDateTime(period.StartDate))
-            .Where(l => l.Date <= DateOnly.FromDateTime(period.EndDate))
+            .Where(l => l.Date >= period.StartDate)
+            .Where(l => l.Date <= period.EndDate)
             .OrderBy(l => l.Date)
             .ThenBy(l => l.StartTime)
             .AsNoTracking()
@@ -138,10 +134,8 @@ namespace TimeTable.Models.Repository
         {
             return await _dbContext.Lessons
             .Where(x => x.ClassName == className)
-            .Where(l => l.StartTime >= TimeOnly.FromDateTime(period.StartDate))
-            .Where(l => l.EndTime <= TimeOnly.FromDateTime(period.EndDate))
-            .Where(l => l.Date >= DateOnly.FromDateTime(period.StartDate))
-            .Where(l => l.Date <= DateOnly.FromDateTime(period.EndDate))
+            .Where(l => l.Date >= period.StartDate)
+            .Where(l => l.Date <= period.EndDate)
             .OrderBy(l => l.Date)
             .ThenBy(l => l.StartTime)
             .AsNoTracking()
