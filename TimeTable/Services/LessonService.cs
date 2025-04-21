@@ -35,7 +35,7 @@ namespace TimeTable.Services
                 return Array.Empty<Guid>();
             var startTime = startPeriod;
             List<Lesson> lessonsToAdd = new();
-            while(startTime < endPeriod)
+            while(startTime <= endPeriod)
             {
                 startTime = ForEach(lessonsToAdd, lesson, days, startTime, endPeriod);
             }
