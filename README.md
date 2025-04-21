@@ -40,19 +40,21 @@
 	
  	`POSTGRES_DB=postgres`
 
-4. Запустить контейнер с PostgreSQL и kafka (Docker Desktop должен быть включён)
+ 	#### Нужный пароль к БД находится в приватной беседе
+
+5. Запустить контейнер с PostgreSQL и kafka (Docker Desktop должен быть включён)
 
 	`docker-compose up -d`
 
-5. Проверить, что БД работает
+6. Проверить, что БД работает
 
 	`docker ps`
 
-6. Инициализировать базу данных (только при первом запуске)
+7. Инициализировать базу данных (только при первом запуске)
 
 	`docker exec -i microservice-schedule--db-1 psql -U postgres -f init.sql`
 
-7. Теперь можно запускать проект через Visual Studio, http://localhost:5233/swagger/
+8. Теперь можно запускать проект через Visual Studio, http://localhost:5233/swagger/
 
 ### Повторный запуск после перезапуска ПК
 
