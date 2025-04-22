@@ -35,7 +35,7 @@ namespace TimeTable.Services
                 return Array.Empty<Guid>();
             var startTime = startPeriod;
             List<Lesson> lessonsToAdd = new();
-            while(startTime < endPeriod)
+            while(startTime <= endPeriod)
             {
                 startTime = ForEach(lessonsToAdd, lesson, days, startTime, endPeriod);
             }
@@ -55,11 +55,10 @@ namespace TimeTable.Services
         private DateOnly Offset(DateOnly startTime, DayOfWeek day)
         {
             var time = startTime;
-            var dayBefore = time.AddDays((int)day - (int)time.DayOfWeek);
-            var dayAfter = time.AddDays(week - ((int)time.DayOfWeek - (int)day));
+            var offset = (int)day - (int)time.DayOfWeek;
             time = (double)time.DayOfWeek <= (double)day 
-                ? dayBefore 
-                : dayAfter;
+                ? time.AddDays(offset)
+                : time.AddDays(week + offset);
             return time;
         }
         private void AddWithOffset(List<Lesson> lessons, Lesson lesson, DateOnly time)
