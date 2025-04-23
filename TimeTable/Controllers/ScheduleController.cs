@@ -18,15 +18,15 @@ namespace TimeTable.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<LessonResponse>>> Get([FromQuery]Period period)
+        public async Task<ActionResult<List<LessonResponse>>> Get(TimeOnly startTime, TimeOnly endTime, DateOnly startDate, DateOnly endDate)
         {
-            if (period.StartDate == DateOnly.MinValue & period.EndDate == DateOnly.MinValue)
+            if (startDate == DateOnly.MinValue & endDate == DateOnly.MinValue)
                 return BadRequest("Period is empty");
 
-            if (period.StartDate > period.EndDate)
+            if (startDate > endDate)
                 return BadRequest("Start date is greater then end date");
 
-            var result = await _lessonService.GetAllForPeriod(period);
+            var result = await _lessonService.GetAllForPeriod(startTime, endTime, startDate, endDate);
             if (result.Count == 0)
                 return NotFound();
 
@@ -34,15 +34,15 @@ namespace TimeTable.Controllers
         }
 
         [HttpGet("user/{id}")]
-        public async Task<ActionResult<List<LessonResponse>>> GetUserSchedule(Guid id, [FromQuery] Period period)
+        public async Task<ActionResult<List<LessonResponse>>> GetUserSchedule(Guid id, TimeOnly startTime, TimeOnly endTime, DateOnly startDate, DateOnly endDate)
         {
-            if (period.StartDate == DateOnly.MinValue & period.EndDate == DateOnly.MinValue)
+            if (startDate == DateOnly.MinValue & endDate == DateOnly.MinValue)
                 return BadRequest("Period is empty");
 
-            if (period.StartDate > period.EndDate)
+            if (startDate > endDate)
                 return BadRequest("Start date is greater then end date");
 
-            var result = await _lessonService.GetUserSchedule(id, period);
+            var result = await _lessonService.GetUserSchedule(id, startTime, endTime, startDate, endDate);
             if (result.Count == 0)
                 return NotFound();
 
@@ -50,15 +50,15 @@ namespace TimeTable.Controllers
         } 
 
         [HttpGet("class/{className}")]
-        public async Task<ActionResult<List<LessonResponse>>> GetClassSchedule(string className, [FromQuery] Period period)
+        public async Task<ActionResult<List<LessonResponse>>> GetClassSchedule(string className, TimeOnly startTime, TimeOnly endTime, DateOnly startDate, DateOnly endDate)
         {
-            if (period.StartDate == DateOnly.MinValue & period.EndDate == DateOnly.MinValue)
-                return BadRequest("Period is empty");
+            if (startDate == DateOnly.MinValue & endDate == DateOnly.MinValue)
+                return BadRequest("Date is empty");
 
-            if (period.StartDate > period.EndDate)
+            if (startDate > endDate)
                 return BadRequest("Start date is greater then end date");
 
-            var result = await _lessonService.GetClassSchedule(className, period);
+            var result = await _lessonService.GetClassSchedule(className, startTime, endTime, startDate, endDate);
 
             if (result.Count == 0)
                 return NotFound();

@@ -108,8 +108,10 @@ namespace TimeTable.Models.Repository
         public async Task<List<Lesson>> GetAllForPeriod(Period period)
         {
             return await _dbContext.Lessons
-            .Where(l => l.Date >= period.StartDate)
-            .Where(l => l.Date <= period.EndDate)
+            .Where(l => l.Date > period.StartDate ||
+                   (l.Date == period.StartDate && l.StartTime >= period.StartTime))
+            .Where(l => l.Date < period.EndDate ||
+                   (l.Date == period.EndDate && l.StartTime <= period.EndTime))
             .OrderBy(l => l.Date)
             .ThenBy(l => l.StartTime)
             .AsNoTracking()
@@ -121,8 +123,10 @@ namespace TimeTable.Models.Repository
         {
             return await _dbContext.Lessons
             .Where(x => x.UserId == userid)
-            .Where(l => l.Date >= period.StartDate)
-            .Where(l => l.Date <= period.EndDate)
+            .Where(l => l.Date > period.StartDate ||
+                   (l.Date == period.StartDate && l.StartTime >= period.StartTime))
+            .Where(l => l.Date < period.EndDate ||
+                   (l.Date == period.EndDate && l.StartTime <= period.EndTime))
             .OrderBy(l => l.Date)
             .ThenBy(l => l.StartTime)
             .AsNoTracking()
@@ -134,8 +138,10 @@ namespace TimeTable.Models.Repository
         {
             return await _dbContext.Lessons
             .Where(x => x.ClassName == className)
-            .Where(l => l.Date >= period.StartDate)
-            .Where(l => l.Date <= period.EndDate)
+            .Where(l => l.Date > period.StartDate ||
+                   (l.Date == period.StartDate && l.StartTime >= period.StartTime))
+            .Where(l => l.Date < period.EndDate ||
+                   (l.Date == period.EndDate && l.StartTime <= period.EndTime))
             .OrderBy(l => l.Date)
             .ThenBy(l => l.StartTime)
             .AsNoTracking()
