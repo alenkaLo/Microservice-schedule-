@@ -36,7 +36,7 @@ namespace TimeTable.Controllers
             if (result is null)
                 return NotFound();
 
-            return Ok(result);
+            return Ok();
         }
 
         [HttpPost]
@@ -58,7 +58,7 @@ namespace TimeTable.Controllers
         }
 
         [HttpPost("CreateWithRepeat")]
-        public async Task<ActionResult<IdResponse>> CreateWithRepeats([FromBody]LessonWithOutIDnDate lessonWithoutDate, [FromQuery] List<DayOfWeek> days, DateOnly startPeriod, DateOnly endPeriod)
+        public async Task<ActionResult<IdResponse[]>> CreateWithRepeats([FromBody]LessonWithOutIDnDate lessonWithoutDate, [FromQuery] List<DayOfWeek> days, DateOnly startPeriod, DateOnly endPeriod)
         {
             Lesson lesson = new Lesson();
             lesson.Subject=lessonWithoutDate.Subject;
