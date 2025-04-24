@@ -115,7 +115,6 @@ namespace TimeTable.Models.Repository
             .OrderBy(l => l.Date)
             .ThenBy(l => l.StartTime)
             .AsNoTracking()
-            .AsNoTracking()
             .ToListAsync();
         }
 
@@ -129,7 +128,6 @@ namespace TimeTable.Models.Repository
                    (l.Date == period.EndDate && l.StartTime <= period.EndTime))
             .OrderBy(l => l.Date)
             .ThenBy(l => l.StartTime)
-            .AsNoTracking()
             .AsNoTracking()
             .ToListAsync();
         }
