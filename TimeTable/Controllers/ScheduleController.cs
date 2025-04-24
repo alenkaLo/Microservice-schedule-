@@ -21,7 +21,7 @@ namespace TimeTable.Controllers
         public async Task<ActionResult<List<LessonResponse>>> Get(TimeOnly startTime, TimeOnly endTime, DateOnly startDate, DateOnly endDate)
         {
             if (startDate == DateOnly.MinValue & endDate == DateOnly.MinValue)
-                return BadRequest("Period is empty");
+                return BadRequest("Date is empty");
 
             if (startDate > endDate)
                 return BadRequest("Start date is greater then end date");
@@ -37,7 +37,7 @@ namespace TimeTable.Controllers
         public async Task<ActionResult<List<LessonResponse>>> GetUserSchedule(Guid id, TimeOnly startTime, TimeOnly endTime, DateOnly startDate, DateOnly endDate)
         {
             if (startDate == DateOnly.MinValue & endDate == DateOnly.MinValue)
-                return BadRequest("Period is empty");
+                return BadRequest("Date is empty");
 
             if (startDate > endDate)
                 return BadRequest("Start date is greater then end date");
