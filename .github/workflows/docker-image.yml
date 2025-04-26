@@ -13,7 +13,7 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     - name: Build the Docker image
-      run: docker compose -f Scripts/compose.yaml.gh_actions up
+      run: docker compose -f compose.yaml.gh_actions up
 
   init_db:
     
