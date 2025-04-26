@@ -13,7 +13,7 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     - name: Build the Docker image
-      run: docker compose -f compose.yaml.gh_actions up
+      run: docker compose -f compose.yaml.gh_actions up 
 
   init_db:
     
@@ -22,7 +22,7 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     - name: Init psql database
-      run: until echo "4hS1nS2" | docker exec -i db-1 psql -U postgres -f init.sql; do echo ...; sleep 1; done 
+      run: export PGPASSWORD="4hS1nS2" && until psql --host=localhost -U postgres -f init.sql; do echo ...; sleep 1; done 
 
   test:
 
