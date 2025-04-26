@@ -7,9 +7,7 @@ on:
     branches: [ "main" ]
 
 jobs:
-
   build:
-
     runs-on: ubuntu-latest
 
     steps:
@@ -17,9 +15,18 @@ jobs:
     - name: Build the Docker image
       run: docker compose -f Scripts/compose.yaml.gh_actions up
 
+  init_db:
+    
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Init psql database
+      run: until done echo "4hS1nS2" | docker exec -i microservice-schedule--db-1 psql -U postgres -f init.sql; do echo ...; sleep 1; 
+
   test:
 
-    needs: build
+    needs: init_db
 
     strategy:
       matrix:

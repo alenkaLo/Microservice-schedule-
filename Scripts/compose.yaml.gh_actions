@@ -1,15 +1,28 @@
 services:
+  server:
+    image: microservice-schedule:latest
+    container_name: microservice-schedule
+    ports:
+      - "5233:5233"
+    environment:
+      - ASPNETCORE_HTTP_PORTS=5233
+      - ASPNETCORE_ENVIRONMENT=Development
+    stdin_open: true
+    tty: true
+    build:
+      context: .
+      target: final
   db:
     image: postgres:16-alpine
     container_name: microservice-schedule--db-1
     restart: always
     environment:
-      POSTGRES_PASSWORD: gh_actions_sample_pass
+      POSTGRES_PASSWORD: 4hS1nS2
       POSTGRES_USER: postgres
       POSTGRES_DB: postgres
     volumes:
-      - ./pgdata:/var/lib/postgresql/data
-      - ./init.sql:/init.sql
+      - ../pgdata:/var/lib/postgresql/data
+      - ../init.sql:/init.sql
     ports:
       - 5432:5432
   kafka:
