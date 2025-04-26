@@ -22,7 +22,7 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     - name: Init psql database
-      run: until echo "4hS1nS2" | docker exec -i microservice-schedule--db-1 psql -U postgres -f init.sql; do echo ...; sleep 1; done 
+      run: until echo "4hS1nS2" | docker exec -i db-1 psql -U postgres -f init.sql; do echo ...; sleep 1; done 
 
   test:
 
