@@ -7,22 +7,24 @@ on:
     branches: [ "main" ]
 
 jobs:
-  build:
-    runs-on: windows-latest
+  #build:
+  #  runs-on: windows-latest
 
-    steps:
-    - uses: actions/checkout@v4
-    - name: Build the Docker image
-      run: docker compose -f compose.yaml.gh_actions up 
+#    steps:
+#    - uses: actions/checkout@v4
+#    - name: Build the Docker image
+#      run: docker compose -f compose.yaml.gh_actions up 
 
   init_db:
     
     runs-on: windows-latest
-
+		
     steps:
     - uses: actions/checkout@v4
     - name: Init psql database
-      run: export PGPASSWORD="4hS1nS2" && until psql --host=localhost -U postgres -f init.sql; do echo ...; sleep 1; done 
+	  run: set PGPASSWORD="4hS1nS2" && docker compose -f compose.yaml.gh_actions up && :Loop psql --host=localhost -U postgres -f init.sql if not %errorlevel% equ 0 goto :Loop
+
+      #run: export PGPASSWORD="4hS1nS2" && until psql --host=localhost -U postgres -f init.sql; do echo ...; sleep 1; done 
 
   test:
 
