@@ -14,11 +14,10 @@ jobs:
 #    - uses: actions/checkout@v4
 #    - name: Build the Docker image
 #      run: docker compose -f compose.yaml.gh_actions up 
+  build:
 
-  init_db:
-    
     runs-on: windows-latest
-		
+
     steps:
     - uses: actions/checkout@v4
     - name: Init psql database
@@ -28,7 +27,7 @@ jobs:
 
   test:
 
-    needs: init_db
+    needs: build
 
     strategy:
       matrix:
