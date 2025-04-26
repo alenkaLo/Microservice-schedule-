@@ -52,28 +52,37 @@ public partial class LessonRepositoryTests
     {
         var testLessons = new[]
         {
-            GenerateLesson(),
-            GenerateLesson(),
-            GenerateLesson()
+            GenerateLesson(new DateTime(2025, 4, 1, 13, 0, 0)),
+            GenerateLesson(new DateTime(2025, 4, 1, 11, 0, 0)),
+            GenerateLesson(new DateTime(2025, 4, 1, 12, 0, 0)),
+            GenerateLesson(new DateTime(2025, 3, 1, 13, 0, 0)),
+            GenerateLesson(new DateTime(2025, 3, 1, 11, 0, 0)),
+            GenerateLesson(new DateTime(2025, 3, 1, 12, 0, 0))
+
         };
 
         return testLessons;
     }
 
-    private Lesson GenerateLesson()
+    private Lesson GenerateLesson(DateTime? date = null)
     {
         Random rand = new Random();
         int randInt = rand.Next(10);
-        return new Lesson
+
+        DateTime lessonDate = date ?? DateTime.Now.AddHours(randInt);
+
+        Lesson lesson = new Lesson
         {
             Id = Guid.NewGuid(),
             Subject = "",
             UserId = Guid.NewGuid(),
             ClassName = "",
             TaskID = Guid.NewGuid(),
-            Date = DateOnly.FromDateTime(DateTime.UtcNow),
-            StartTime = TimeOnly.FromDateTime(DateTime.UtcNow.AddHours(randInt)),
-            EndTime = TimeOnly.FromDateTime(DateTime.UtcNow.AddHours(randInt + 1))
+            Date = DateOnly.FromDateTime(lessonDate),
+            StartTime = TimeOnly.FromDateTime(lessonDate),
+            EndTime = TimeOnly.FromDateTime(lessonDate.AddHours(1))
         };
+
+        return lesson;
     }
 }

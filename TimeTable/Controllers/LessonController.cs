@@ -40,8 +40,8 @@ namespace TimeTable.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> Create(LessonWithOutID lessonWithoutID)
-        {
+        public async Task<ActionResult<IdResponse>> Create(LessonWithOutID lessonWithoutID)
+        { 
             Lesson lesson = new Lesson();
             lesson.Subject = lessonWithoutID.Subject;
             lesson.UserId = lessonWithoutID.UserId;
@@ -58,7 +58,7 @@ namespace TimeTable.Controllers
         }
 
         [HttpPost("CreateWithRepeats{startPeriod:DateTime}")]
-        public async Task<ActionResult> CreateWithRepeats([FromBody]LessonWithOutIDnDate lessonWithoutDate, [FromQuery] List<DayOfWeek> days, DateOnly startPeriod, DateOnly endPeriod)
+        public async Task<ActionResult<IdResponse[]>> CreateWithRepeats([FromBody]LessonWithOutIDnDate lessonWithoutDate, [FromQuery] List<DayOfWeek> days, DateOnly startPeriod, DateOnly endPeriod)
         {
             Lesson lesson = new Lesson();
             lesson.Subject=lessonWithoutDate.Subject;
@@ -74,7 +74,7 @@ namespace TimeTable.Controllers
                 return new JsonResult(BadRequest());
         }
         [HttpPut("{id:guid}")]
-        public async Task<ActionResult> Update(Guid id, string? subject, Guid? userId, string? className, Guid? taskId, DateOnly? date, TimeOnly? startTime, TimeOnly? endtime)
+        public async Task<ActionResult<IdResponse>> Update(Guid id, string? subject, Guid? userId, string? className, Guid? taskId, DateOnly? date, TimeOnly? startTime, TimeOnly? endtime)
         {
             var result = await _lessonService.Update(id, subject, userId, className, taskId, date, startTime, endtime);
             if (result == Guid.Empty)
@@ -83,7 +83,7 @@ namespace TimeTable.Controllers
             return Ok(result);
         }
         [HttpDelete("{id:guid}")]
-        public async Task<ActionResult> Delete(Guid id)
+        public async Task<ActionResult<IdResponse>> Delete(Guid id)
         {
             var result = await _lessonService.Delete(id);
 
