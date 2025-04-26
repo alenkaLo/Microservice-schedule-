@@ -1,18 +1,4 @@
 services:
-  server:
-    image: microservice-schedule:latest
-    container_name: microservice-schedule
-    ports:
-      - "5233:5233"
-    environment:
-      - ASPNETCORE_HTTP_PORTS=5233
-      - ASPNETCORE_ENVIRONMENT=Development
-    stdin_open: true
-    tty: true
-    build:
-      context: .
-      target: final
-      dockerfile: Dockerfile.gh_actions
   db:
     image: postgres:16-alpine
     container_name: db-1
