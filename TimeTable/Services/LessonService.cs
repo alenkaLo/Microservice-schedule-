@@ -48,16 +48,37 @@ namespace TimeTable.Services
         }
         public async Task<List<Lesson>> GetAllForPeriod(TimeOnly startTime, TimeOnly endTime, DateOnly startDate, DateOnly endDate)
         {
-            return await _lessonRepository.GetAllForPeriod(startTime, endTime, startDate, endDate);
+            var period = new Period
+            {
+                StartDate = startDate,
+                EndDate = endDate,
+                StartTime = startTime,
+                EndTime = endTime
+            };
+            return await _lessonRepository.GetAllForPeriod(period);
         }
         public async Task<List<Lesson>> GetUserSchedule(Guid id, TimeOnly startTime, TimeOnly endTime, DateOnly startDate, DateOnly endDate)
         {
-            return await _lessonRepository.GetUserLessons(id, startTime, endTime, startDate, endDate);
+            var period = new Period
+            {
+                StartDate = startDate,
+                EndDate = endDate,
+                StartTime = startTime,
+                EndTime = endTime
+            };
+            return await _lessonRepository.GetUserLessons(id, period);
         }
 
         public async Task<List<Lesson>> GetClassSchedule(string className, TimeOnly startTime, TimeOnly endTime, DateOnly startDate, DateOnly endDate)
         {
-            return await _lessonRepository.GetClassLessons(className, startTime, endTime, startDate, endDate);
+            var period = new Period
+            {
+                StartDate = startDate,
+                EndDate = endDate,
+                StartTime = startTime,
+                EndTime = endTime
+            };
+            return await _lessonRepository.GetClassLessons(className, period);
         }
     }
 }

@@ -19,7 +19,7 @@ namespace TimeTable.Models.Repository
             return await _dbContext.Lessons
                 .AsNoTracking()
                 .OrderBy(l => l.Date)
-                .ThenBy(l=>l.StartTime)
+                .ThenBy(l => l.StartTime)
                 .ToListAsync();
         }
 
@@ -102,37 +102,43 @@ namespace TimeTable.Models.Repository
 
             return id;
         }
-        public async Task<List<Lesson>> GetAllForPeriod(TimeOnly startTime, TimeOnly endTime, DateOnly startDate, DateOnly endDate)
+        public async Task<List<Lesson>> GetAllForPeriod(Period period)
         {
             return await _dbContext.Lessons
-            .Where(l => l.StartTime >= startTime)
-            .Where(l => l.EndTime <= endTime)
-            .Where(l => l.Date >= startDate)
-            .Where(l => l.Date <= endDate)
+            .Where(l => l.Date > period.StartDate ||
+                   (l.Date == period.StartDate && l.StartTime >= period.StartTime))
+            .Where(l => l.Date < period.EndDate ||
+                   (l.Date == period.EndDate && l.StartTime <= period.EndTime))
+            .OrderBy(l => l.Date)
+            .ThenBy(l => l.StartTime)
             .AsNoTracking()
             .ToListAsync();
         }
 
-        public async Task<List<Lesson>> GetUserLessons(Guid userid, TimeOnly startTime, TimeOnly endTime, DateOnly startDate, DateOnly endDate)
+        public async Task<List<Lesson>> GetUserLessons(Guid userid, Period period)
         {
             return await _dbContext.Lessons
             .Where(x => x.UserId == userid)
-            .Where(l => l.StartTime >= startTime)
-            .Where(l => l.EndTime <= endTime)
-            .Where(l => l.Date >= startDate)
-            .Where(l => l.Date <= endDate)
+            .Where(l => l.Date > period.StartDate ||
+                   (l.Date == period.StartDate && l.StartTime >= period.StartTime))
+            .Where(l => l.Date < period.EndDate ||
+                   (l.Date == period.EndDate && l.StartTime <= period.EndTime))
+            .OrderBy(l => l.Date)
+            .ThenBy(l => l.StartTime)
             .AsNoTracking()
             .ToListAsync();
         }
 
-        public async Task<List<Lesson>> GetClassLessons(string className, TimeOnly startTime, TimeOnly endTime, DateOnly startDate, DateOnly endDate)
+        public async Task<List<Lesson>> GetClassLessons(string className, Period period)
         {
             return await _dbContext.Lessons
             .Where(x => x.ClassName == className)
-            .Where(l => l.StartTime >= startTime)
-            .Where(l => l.EndTime <= endTime)
-            .Where(l => l.Date >= startDate)
-            .Where(l => l.Date <= endDate)
+            .Where(l => l.Date > period.StartDate ||
+                   (l.Date == period.StartDate && l.StartTime >= period.StartTime))
+            .Where(l => l.Date < period.EndDate ||
+                   (l.Date == period.EndDate && l.StartTime <= period.EndTime))
+            .OrderBy(l => l.Date)
+            .ThenBy(l => l.StartTime)
             .AsNoTracking()
             .ToListAsync();
         }
