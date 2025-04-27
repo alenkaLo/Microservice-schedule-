@@ -1,7 +1,9 @@
 # Попытка 1: Запустить докер в build job, инициализировать в init_db job, тестить в test
 #   - провалилась потому что разные jobs даже не находятся в одной локальной сети, мне нужно сделать всё на windows-latest
 # Попытка 2: Запустить докер в windows-latest, там же протестить
-#   - провалилась потому что для kafka-ui нет entry
+#   - провалилась потому что для докера no matching manifest for windows/amd64 10.0.20348 in the manifest list entries (почему)
+# Попытка 3: Запускать базу данных в том же windows-latest
+#   - ?
 
 name: Docker Image CI
 
@@ -12,13 +14,6 @@ on:
     branches: [ "main" ]
 
 jobs:
-  #build:
-  #  runs-on: windows-latest
-
-#    steps:
-#    - uses: actions/checkout@v4
-#    - name: Build the Docker image
-#      run: docker compose -f compose.yaml.gh_actions up 
   build:
 
     runs-on: windows-latest
@@ -26,9 +21,8 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     - name: Init psql database
-      run: set PGPASSWORD="4hS1nS2" && docker compose -f compose.yaml.gh_actions up && :Loop psql --host=localhost -U postgres -f init.sql if not %errorlevel% equ 0 goto :Loop
-
-      #run: export PGPASSWORD="4hS1nS2" && until psql --host=localhost -U postgres -f init.sql; do echo ...; sleep 1; done 
+      run: set PGPASSWORD="4hS1nS2" &&  docker compose -f compose.yaml.gh_actions up && :Loop psql --host=localhost -U postgres -f init.sql if not %errorlevel% equ 0 goto :Loop
+    - name:
 
   test:
 
