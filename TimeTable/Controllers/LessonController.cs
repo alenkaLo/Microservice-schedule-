@@ -53,8 +53,8 @@ namespace TimeTable.Controllers
             var result = await _lessonService.Add(lesson);
             if (result != Guid.Empty)
                 return Ok(result);
-            else
-                return BadRequest();
+            
+            return BadRequest();
         }
 
         [HttpPost("CreateWithRepeats{startPeriod:DateTime}")]
