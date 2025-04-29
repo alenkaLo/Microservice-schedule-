@@ -29,8 +29,7 @@ public partial class LessonRepositoryTests
         var result = await _repository.GetById(existingLesson.Id);
 
         // Assert
-        //Assert.IsNotNull(result);
-        Assert.IsNull(result);
+        Assert.IsNotNull(result);
         Assert.AreEqual(existingLesson.Id, result.Id);
         Assert.AreEqual(existingLesson.Date, result.Date);
     }
