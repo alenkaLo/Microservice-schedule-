@@ -29,45 +29,14 @@ namespace TimeTable.Services
                 return Guid.Empty;
            return await _lessonRepository.Add(lesson);
         }
-        public async Task<Guid> AddWithRepeats(Lesson lesson, List<DateTime> days, DateOnly startPeriod, DateOnly endPeriod)
+        public async Task<Guid[]> AddWithRepeats(Lesson lesson, List<DayOfWeek> filter, DateOnly startPeriod, DateOnly endPeriod)
         {
-            if (startPeriod > endPeriod)
-                return Guid.Empty;
-            var startTime = startPeriod;
-            List<Lesson> lessonsToAdd = new();
-            while(startTime < endPeriod)
-            {
-                startTime = ForEach(lessonsToAdd, lesson, days, startTime, endPeriod);
-            }
-            await _lessonRepository.AddList(lessonsToAdd);
-            return lesson.Id;
-        }
-        private DateOnly ForEach(List<Lesson> lessons, Lesson lesson, List<DateTime> days, DateOnly startTime, DateOnly endPeriod)
-        {
-            foreach (var day in days)
-            {
-                var time = Offset(startTime, day);
-                if (time > endPeriod)
-                    continue;
-                 AddWithOffset(lessons,lesson, time);
-            }
-            return startTime.AddDays(week);
-        }
-        private DateOnly Offset(DateOnly startTime, DateTime day)
-        {
-            var time = startTime;
-            var dayBefore = time.AddDays((int)day.DayOfWeek - (int)time.DayOfWeek);
-            var dayAfter = time.AddDays(week - ((int)time.DayOfWeek - (int)day.DayOfWeek));
-            time = (double)time.DayOfWeek <= (double)day.DayOfWeek 
-                ? dayBefore 
-                : dayAfter;
-            return time;
-        }
-        private void AddWithOffset(List<Lesson> lessons, Lesson lesson, DateOnly time)
-        {
-            lesson.Date = time;
-            lesson.Id = Guid.NewGuid();
-            lessons.Add(lesson.Clone());
+            LessonsToAdd lessonsToAdd = new LessonsToAdd(new List<Lesson>(), lesson);
+            DatePeriod datePeriod = new DatePeriod(startPeriod, endPeriod, filter);
+            if (!datePeriod.CheckCorrectPeriod())
+                return Array.Empty<Guid>();
+            datePeriod.Start(lessonsToAdd);
+           return await _lessonRepository.AddList(lessonsToAdd.Lessons);
         }
         public async Task<Guid> Delete(Guid id)
         {
@@ -79,16 +48,37 @@ namespace TimeTable.Services
         }
         public async Task<List<Lesson>> GetAllForPeriod(TimeOnly startTime, TimeOnly endTime, DateOnly startDate, DateOnly endDate)
         {
-            return await _lessonRepository.GetAllForPeriod(startTime, endTime, startDate, endDate);
+            var period = new Period
+            {
+                StartDate = startDate,
+                EndDate = endDate,
+                StartTime = startTime,
+                EndTime = endTime
+            };
+            return await _lessonRepository.GetAllForPeriod(period);
         }
         public async Task<List<Lesson>> GetUserSchedule(Guid id, TimeOnly startTime, TimeOnly endTime, DateOnly startDate, DateOnly endDate)
         {
-            return await _lessonRepository.GetUserLessons(id, startTime, endTime, startDate, endDate);
+            var period = new Period
+            {
+                StartDate = startDate,
+                EndDate = endDate,
+                StartTime = startTime,
+                EndTime = endTime
+            };
+            return await _lessonRepository.GetUserLessons(id, period);
         }
 
         public async Task<List<Lesson>> GetClassSchedule(string className, TimeOnly startTime, TimeOnly endTime, DateOnly startDate, DateOnly endDate)
         {
-            return await _lessonRepository.GetClassLessons(className, startTime, endTime, startDate, endDate);
+            var period = new Period
+            {
+                StartDate = startDate,
+                EndDate = endDate,
+                StartTime = startTime,
+                EndTime = endTime
+            };
+            return await _lessonRepository.GetClassLessons(className, period);
         }
     }
 }

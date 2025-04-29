@@ -19,6 +19,7 @@ namespace TimeTable.Models.Repository
             return await _dbContext.Lessons
                 .AsNoTracking()
                 .OrderBy(l => l.Date)
+                .ThenBy(l => l.StartTime)
                 .ToListAsync();
         }
 
@@ -43,20 +44,22 @@ namespace TimeTable.Models.Repository
                 return Guid.Empty;
             }
         }
-        public async Task<Guid> AddList(List<Lesson> lessons)
+        public async Task<Guid[]> AddList(List<Lesson> lessons)
         {
             if (lessons == null || !lessons.Any())
             {
-                // Возвращаем пустой Guid, если список null или пустой
-                return Guid.Empty;
+                return Array.Empty<Guid>();
             }
             await _dbContext.Lessons.AddRangeAsync(lessons);
             _dbContext.SaveChanges();
-
-            // Возвращаем ID первого урока в списке
-            // (или можно выбрать другую логику возврата)
-            return lessons.First().Id;
+            List<Guid> indexes = new List<Guid>();
+            foreach (var lesson in lessons)
+            {
+                indexes.Add(lesson.Id);
+            }
+            return indexes.ToArray();
         }
+
         public async Task<Guid> Delete(Guid id)
         {
             var query = _dbContext.Lessons.Where(x => x.Id == id);
@@ -99,37 +102,43 @@ namespace TimeTable.Models.Repository
 
             return id;
         }
-        public async Task<List<Lesson>> GetAllForPeriod(TimeOnly startTime, TimeOnly endTime, DateOnly startDate, DateOnly endDate)
+        public async Task<List<Lesson>> GetAllForPeriod(Period period)
         {
             return await _dbContext.Lessons
-            .Where(l => l.StartTime >= startTime)
-            .Where(l => l.EndTime <= endTime)
-            .Where(l => l.Date >= startDate)
-            .Where(l => l.Date <= endDate)
+            .Where(l => l.Date > period.StartDate ||
+                   (l.Date == period.StartDate && l.StartTime >= period.StartTime))
+            .Where(l => l.Date < period.EndDate ||
+                   (l.Date == period.EndDate && l.StartTime <= period.EndTime))
+            .OrderBy(l => l.Date)
+            .ThenBy(l => l.StartTime)
             .AsNoTracking()
             .ToListAsync();
         }
 
-        public async Task<List<Lesson>> GetUserLessons(Guid userid, TimeOnly startTime, TimeOnly endTime, DateOnly startDate, DateOnly endDate)
+        public async Task<List<Lesson>> GetUserLessons(Guid userid, Period period)
         {
             return await _dbContext.Lessons
             .Where(x => x.UserId == userid)
-            .Where(l => l.StartTime >= startTime)
-            .Where(l => l.EndTime <= endTime)
-            .Where(l => l.Date >= startDate)
-            .Where(l => l.Date <= endDate)
+            .Where(l => l.Date > period.StartDate ||
+                   (l.Date == period.StartDate && l.StartTime >= period.StartTime))
+            .Where(l => l.Date < period.EndDate ||
+                   (l.Date == period.EndDate && l.StartTime <= period.EndTime))
+            .OrderBy(l => l.Date)
+            .ThenBy(l => l.StartTime)
             .AsNoTracking()
             .ToListAsync();
         }
 
-        public async Task<List<Lesson>> GetClassLessons(string className, TimeOnly startTime, TimeOnly endTime, DateOnly startDate, DateOnly endDate)
+        public async Task<List<Lesson>> GetClassLessons(string className, Period period)
         {
             return await _dbContext.Lessons
             .Where(x => x.ClassName == className)
-            .Where(l => l.StartTime >= startTime)
-            .Where(l => l.EndTime <= endTime)
-            .Where(l => l.Date >= startDate)
-            .Where(l => l.Date <= endDate)
+            .Where(l => l.Date > period.StartDate ||
+                   (l.Date == period.StartDate && l.StartTime >= period.StartTime))
+            .Where(l => l.Date < period.EndDate ||
+                   (l.Date == period.EndDate && l.StartTime <= period.EndTime))
+            .OrderBy(l => l.Date)
+            .ThenBy(l => l.StartTime)
             .AsNoTracking()
             .ToListAsync();
         }
