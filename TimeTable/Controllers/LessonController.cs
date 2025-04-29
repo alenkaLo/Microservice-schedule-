@@ -54,7 +54,7 @@ namespace TimeTable.Controllers
             if (result != Guid.Empty)
                 return Ok(result);
             else
-                return new JsonResult(BadRequest());
+                return BadRequest();
         }
 
         [HttpPost("CreateWithRepeats{startPeriod:DateTime}")]
@@ -71,7 +71,7 @@ namespace TimeTable.Controllers
             if (result != Array.Empty<Guid>())
                 return Ok(result);
             else
-                return new JsonResult(BadRequest());
+                return BadRequest();
         }
         [HttpPut("{id}")]
         public async Task<ActionResult<IdResponse>> Update(Guid id, string? subject, Guid? userId, string? className, Guid? taskId, DateOnly? date, TimeOnly? startTime, TimeOnly? endtime)
