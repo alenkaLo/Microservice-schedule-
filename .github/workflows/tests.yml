@@ -1,0 +1,57 @@
+# Попытка 1: Запустить докер в build job, инициализировать в init_db job, тестить в test
+#   - провалилась потому что разные jobs даже не находятся в одной локальной сети, мне нужно сделать всё на windows-latest
+# Попытка 2: Запустить докер в windows-latest, там же протестить
+#   - провалилась потому что для докера no matching manifest for windows/amd64 10.0.20348 in the manifest list entries (почему)
+# Попытка 3: Запускать базу данных в том же windows-latest
+#   - ?
+
+name: .NET Tests with PostgreSQL
+
+on:
+  push:
+    branches: [ "main", "SashaDev" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    
+    services:
+      postgres:
+        image: postgres:latest
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: testdb
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        volumes:
+          - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: 8.0.x
+
+    - name: Wait for PostgreSQL to be ready
+      run: sleep 10
+
+    - name: Restore dependencies
+      run: dotnet restore
+
+    - name: Build
+      run: dotnet build --no-restore
+
+    - name: Test
+      run: dotnet test --no-build --verbosity normal
+      env:
+        ConnectionStrings__DefaultConnection: "Host=localhost;Port=5432;Database=testdb;Username=postgres;Password=postgres"
