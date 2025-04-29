@@ -30,7 +30,7 @@ public partial class LessonRepositoryTests
 
         // Assert
         //Assert.IsNotNull(result);
-        Assert.IsNotNull(result);
+        Assert.IsNull(result);
         Assert.AreEqual(existingLesson.Id, result.Id);
         Assert.AreEqual(existingLesson.Date, result.Date);
     }
