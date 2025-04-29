@@ -17,7 +17,7 @@ namespace TimeTable.Controllers
             _lessonService = lessonService;
         }
 
-        [HttpGet("{id:guid}")]
+        [HttpGet("{id}")]
         public async Task<ActionResult<LessonResponse>> GetById(Guid id)
         {
             var result = await _lessonService.GetLessonById(id);
@@ -73,7 +73,7 @@ namespace TimeTable.Controllers
             else
                 return BadRequest();
         }
-        [HttpPut("{id:guid}")]
+        [HttpPut("{id}")]
         public async Task<ActionResult<IdResponse>> Update(Guid id, string? subject, Guid? userId, string? className, Guid? taskId, DateOnly? date, TimeOnly? startTime, TimeOnly? endtime)
         {
             var result = await _lessonService.Update(id, subject, userId, className, taskId, date, startTime, endtime);
@@ -82,7 +82,7 @@ namespace TimeTable.Controllers
 
             return Ok(result);
         }
-        [HttpDelete("{id:guid}")]
+        [HttpDelete("{id}")]
         public async Task<ActionResult<IdResponse>> Delete(Guid id)
         {
             var result = await _lessonService.Delete(id);
