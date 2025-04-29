@@ -1,10 +1,3 @@
-# Попытка 1: Запустить докер в build job, инициализировать в init_db job, тестить в test
-#   - провалилась потому что разные jobs даже не находятся в одной локальной сети, мне нужно сделать всё на windows-latest
-# Попытка 2: Запустить докер в windows-latest, там же протестить
-#   - провалилась потому что для докера no matching manifest for windows/amd64 10.0.20348 in the manifest list entries (почему)
-# Попытка 3: Запускать базу данных в том же windows-latest
-#   - ?
-
 name: .NET Tests with PostgreSQL
 
 on:
@@ -40,12 +33,6 @@ jobs:
       uses: actions/setup-dotnet@v3
       with:
         dotnet-version: 8.0.x
-
-    - name: Verify init.sql
-      run: |
-        echo "Checking init.sql:"
-        ls -la ${{ github.workspace }}/init.sql
-        cat ${{ github.workspace }}/init.sql
 
     - name: Wait for PostgreSQL to be ready
       run: sleep 10
