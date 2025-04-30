@@ -13,5 +13,7 @@ namespace TimeTable.Models.Repository
         Task<List<Lesson>> GetAllForPeriod(Period period);
         Task<List<Lesson>> GetUserLessons(Guid userid, Period period);
         Task<List<Lesson>> GetClassLessons(string className, Period period);
+        Task<bool> IsTeacherAvailableAsync(Guid teacherId, DateOnly date, TimeOnly startTime, TimeOnly endTime, Guid? excludeLessonId = null);
+        Task<bool> IsClassAvailableAsync(string className, DateOnly date, TimeOnly startTime, TimeOnly endTime, Guid? excludeLessonId = null);
     }
 }

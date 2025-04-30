@@ -40,21 +40,26 @@ namespace TimeTable.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<IdResponse>> Create(LessonWithOutID lessonWithoutID)
+        public async Task<ActionResult<IdResponse>> Create([FromBody]LessonWithOutID lessonWithoutID)
         { 
             Lesson lesson = new Lesson();
             lesson.Subject = lessonWithoutID.Subject;
             lesson.UserId = lessonWithoutID.UserId;
             lesson.ClassName = lessonWithoutID.ClassName;
             lesson.TaskID = lessonWithoutID.TaskID;
-            lesson.Date = lessonWithoutID.Date;
-            lesson.StartTime = lessonWithoutID.StartTime;
-            lesson.EndTime = lessonWithoutID.EndTime;
+            lesson.Date = new DateOnly(lessonWithoutID.Date.Year, lessonWithoutID.Date.Month, lessonWithoutID.Date.Day);
+            lesson.StartTime = new TimeOnly(lessonWithoutID.StartTime.Hour, lessonWithoutID.StartTime.Minute);
+            lesson.EndTime = new TimeOnly(lessonWithoutID.EndTime.Hour, lessonWithoutID.StartTime.Minute);
             var result = await _lessonService.Add(lesson);
-            if (result != Guid.Empty)
+            if (result.IsSuccess == true)
+            {
                 return Ok(result);
+            }
             else
-                return new JsonResult(BadRequest());
+            {
+                return BadRequest(result);
+            }
+
         }
 
         [HttpPost("CreateWithRepeats{startPeriod:DateTime}")]
