@@ -59,9 +59,27 @@ namespace TimeTable.Services
         {
             return await _lessonRepository.Delete(id);
         }
-        public async Task<Guid> Update(Guid id, string? subject, Guid? userId, string? className, Guid? taskId, DateOnly? date, TimeOnly? startTime, TimeOnly? endtime)
+        public async Task<IdResponse> Update(Guid id, string? subject, Guid? userId, string? className, Guid? taskId, DateOnly? date, TimeOnly? startTime, TimeOnly? endTime)
         {
-            return await _lessonRepository.Update(id, subject, userId, className, taskId, date, startTime, endtime);
+            id = Guid.NewGuid();
+            try
+            {
+                if(startTime != null && endTime != null ){
+                var checkResult = await CanCreateOrUpdateLessonAsync(id,(TimeOnly)startTime,(TimeOnly)endTime,(DateOnly)date,className,false);
+                if (!checkResult.IsSuccess)
+                {
+                    return IdResponse.Failure(
+                        $"Невозможно обновить урок. {checkResult.ErrorMessage}");
+                }
+                }
+                await _lessonRepository.Update(id, subject, userId, className, taskId, date, startTime, endTime);
+
+                return IdResponse.Success(id);
+            }
+            catch (Exception ex)
+            {
+                return IdResponse.Failure("Ошибка при обновлении урока");
+            }
         }
         public async Task<List<Lesson>> GetAllForPeriod(TimeOnly startTime, TimeOnly endTime, DateOnly startDate, DateOnly endDate)
         {
@@ -98,55 +116,60 @@ namespace TimeTable.Services
             return await _lessonRepository.GetClassLessons(className, period);
         }
 
-        public async Task<IdResponse> CanCreateOrUpdateLessonAsync(Lesson lesson, bool isUpdate = false)
+        public async Task<IdResponse> CanCreateOrUpdateLessonAsync(Guid id
+                                                                   , TimeOnly startTime
+                                                                   , TimeOnly endTime
+                                                                   , DateOnly date
+                                                                   ,String className
+                                                                   , bool isUpdate = false)
         {
             try
             {
-                Guid? excludeLessonId = isUpdate ? lesson.Id : null;
+                Guid? excludeLessonId = isUpdate ? id : null;
 
                 // Проверка доступности учителя
                 var isTeacherAvailable = await _lessonRepository.IsTeacherAvailableAsync(
-                    lesson.UserId,
-                    lesson.Date,
-                    lesson.StartTime,
-                    lesson.EndTime,
+                    id,
+                    date,
+                    startTime,
+                    endTime,
                     excludeLessonId);
 
                 if (!isTeacherAvailable)
                 {
                     return new IdResponse
                     (
-                        Id: lesson.Id,
+                        Id: id,
                         IsSuccess: false,
-                        ErrorMessage: $"Учитель уже имеет урок в период с {lesson.StartTime} до {lesson.EndTime} {lesson.Date}"
+                        ErrorMessage: $"Учитель уже имеет урок в период с {startTime} до {endTime} {date}"
                     );
                 }
 
                 // Проверка доступности класса
                 var isClassAvailable = await _lessonRepository.IsClassAvailableAsync(
-                    lesson.ClassName,
-                    lesson.Date,
-                    lesson.StartTime,
-                    lesson.EndTime,
+                    className,
+                    date,
+                    startTime,
+                    endTime,
                     excludeLessonId);
 
                 if (!isClassAvailable)
                 {
                     return new IdResponse
                     (
-                        Id: lesson.Id,
+                        Id: id,
                         IsSuccess: false,
-                        ErrorMessage: $"Класс {lesson.ClassName} уже занят в период с {lesson.StartTime} до {lesson.EndTime} {lesson.Date}"
+                        ErrorMessage: $"Класс {className} уже занят в период с {startTime} до {endTime} {date}"
                     );
                 }
 
-                return new IdResponse ( Id: lesson.Id, IsSuccess: true );
+                return new IdResponse ( Id: id, IsSuccess: true );
             }
             catch (Exception ex)
             {
                 return new IdResponse
                 (
-                    Id: lesson.Id,
+                    Id: id,
                     IsSuccess: false,
                     ErrorMessage: "Внутренняя ошибка сервера при проверке доступности урока"
                 );

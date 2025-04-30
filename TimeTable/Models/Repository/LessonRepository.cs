@@ -1,4 +1,4 @@
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using TimeTable.Data;
 using TimeTable.Logging;
 using TimeTable.Models.Entity;
@@ -149,7 +149,7 @@ namespace TimeTable.Models.Repository
             return await _dbContext.Lessons
                 .Where(l => l.UserId == teacherId && l.Date == date)
                 .Where(l => excludeLessonId == null || l.Id != excludeLessonId)
-                .AllAsync(l => l.EndTime <= startTime || l.StartTime >= endTime);
+                .AllAsync(l => l.EndTime < startTime || l.StartTime > endTime);
         }
 
         //Метод проверки доступности урока
@@ -158,7 +158,7 @@ namespace TimeTable.Models.Repository
             return await _dbContext.Lessons
                 .Where(l => l.ClassName == className && l.Date == date)
                 .Where(l => excludeLessonId == null || l.Id != excludeLessonId)
-                .AllAsync(l => l.EndTime <= startTime || l.StartTime >= endTime);
+                .AllAsync(l => l.EndTime < startTime || l.StartTime > endTime);
         }
     }
 }
