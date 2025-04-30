@@ -17,7 +17,7 @@ namespace TimeTable.Controllers
             _lessonService = lessonService;
         }
 
-        [HttpGet("{id:guid}")]
+        [HttpGet("{id}")]
         public async Task<ActionResult<LessonResponse>> GetById(Guid id)
         {
             var result = await _lessonService.GetLessonById(id);
@@ -40,21 +40,22 @@ namespace TimeTable.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<IdResponse>> Create(LessonWithOutID lessonWithoutID)
+        public async Task<ActionResult<IdResponse>> Create([FromBody]LessonWithOutID lessonWithoutID)
         { 
             Lesson lesson = new Lesson();
             lesson.Subject = lessonWithoutID.Subject;
             lesson.UserId = lessonWithoutID.UserId;
             lesson.ClassName = lessonWithoutID.ClassName;
             lesson.TaskID = lessonWithoutID.TaskID;
-            lesson.Date = lessonWithoutID.Date;
-            lesson.StartTime = lessonWithoutID.StartTime;
-            lesson.EndTime = lessonWithoutID.EndTime;
+            lesson.Date = new DateOnly(lessonWithoutID.Date.Year, lessonWithoutID.Date.Month, lessonWithoutID.Date.Day);
+            lesson.StartTime = new TimeOnly(lessonWithoutID.StartTime.Hour, lessonWithoutID.StartTime.Minute);
+            lesson.EndTime = new TimeOnly(lessonWithoutID.EndTime.Hour, lessonWithoutID.StartTime.Minute);
             var result = await _lessonService.Add(lesson);
-            if (result != Guid.Empty)
+            if (result.IsSuccess == true)
                 return Ok(result);
-            
+
             return BadRequest();
+
         }
 
         [HttpPost("CreateWithRepeats{startPeriod:DateTime}")]
@@ -73,7 +74,7 @@ namespace TimeTable.Controllers
             else
                 return BadRequest();
         }
-        [HttpPut("{id:guid}")]
+        [HttpPut("{id}")]
         public async Task<ActionResult<IdResponse>> Update(Guid id, string? subject, Guid? userId, string? className, Guid? taskId, DateOnly? date, TimeOnly? startTime, TimeOnly? endtime)
         {
             var result = await _lessonService.Update(id, subject, userId, className, taskId, date, startTime, endtime);
@@ -82,7 +83,7 @@ namespace TimeTable.Controllers
 
             return Ok(result);
         }
-        [HttpDelete("{id:guid}")]
+        [HttpDelete("{id}")]
         public async Task<ActionResult<IdResponse>> Delete(Guid id)
         {
             var result = await _lessonService.Delete(id);
