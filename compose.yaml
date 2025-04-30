@@ -10,6 +10,7 @@ services:
       - ./init.sql:/init.sql
     ports:
       - 5432:5432
+    hostname: 127.0.0.1
   kafka:
     image: apache/kafka-native
     container_name: microservice-schedule--kafka

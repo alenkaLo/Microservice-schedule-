@@ -142,5 +142,23 @@ namespace TimeTable.Models.Repository
             .AsNoTracking()
             .ToListAsync();
         }
+
+        //Метод проверки доступности учителя
+        public async Task<bool> IsTeacherAvailableAsync(Guid teacherId, DateOnly date, TimeOnly startTime, TimeOnly endTime, Guid? excludeLessonId = null)
+        {
+            return await _dbContext.Lessons
+                .Where(l => l.UserId == teacherId && l.Date == date)
+                .Where(l => excludeLessonId == null || l.Id != excludeLessonId)
+                .AllAsync(l => l.EndTime <= startTime || l.StartTime >= endTime);
+        }
+
+        //Метод проверки доступности урока
+        public async Task<bool> IsClassAvailableAsync(string className, DateOnly date, TimeOnly startTime, TimeOnly endTime, Guid? excludeLessonId = null)
+        {
+            return await _dbContext.Lessons
+                .Where(l => l.ClassName == className && l.Date == date)
+                .Where(l => excludeLessonId == null || l.Id != excludeLessonId)
+                .AllAsync(l => l.EndTime <= startTime || l.StartTime >= endTime);
+        }
     }
 }
