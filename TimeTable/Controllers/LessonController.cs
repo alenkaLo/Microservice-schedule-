@@ -17,7 +17,7 @@ namespace TimeTable.Controllers
             _lessonService = lessonService;
         }
 
-        [HttpGet("{id:guid}")]
+        [HttpGet("{id}")]
         public async Task<ActionResult<LessonResponse>> GetById(Guid id)
         {
             var result = await _lessonService.GetLessonById(id);
@@ -52,13 +52,9 @@ namespace TimeTable.Controllers
             lesson.EndTime = new TimeOnly(lessonWithoutID.EndTime.Hour, lessonWithoutID.StartTime.Minute);
             var result = await _lessonService.Add(lesson);
             if (result.IsSuccess == true)
-            {
                 return Ok(result);
-            }
-            else
-            {
-                return BadRequest(result);
-            }
+
+            return BadRequest();
 
         }
 
@@ -76,9 +72,9 @@ namespace TimeTable.Controllers
             if (result != Array.Empty<Guid>())
                 return Ok(result);
             else
-                return new JsonResult(BadRequest());
+                return BadRequest();
         }
-        [HttpPut("{id:guid}")]
+        [HttpPut("{id}")]
         public async Task<ActionResult<IdResponse>> Update(Guid id, string? subject, Guid? userId, string? className, Guid? taskId, DateOnly? date, TimeOnly? startTime, TimeOnly? endtime)
         {
             var result = await _lessonService.Update(id, subject, userId, className, taskId, date, startTime, endtime);
@@ -87,7 +83,7 @@ namespace TimeTable.Controllers
 
             return Ok(result);
         }
-        [HttpDelete("{id:guid}")]
+        [HttpDelete("{id}")]
         public async Task<ActionResult<IdResponse>> Delete(Guid id)
         {
             var result = await _lessonService.Delete(id);
