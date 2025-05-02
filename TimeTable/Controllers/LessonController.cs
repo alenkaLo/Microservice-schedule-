@@ -24,7 +24,6 @@ namespace TimeTable.Controllers
 
             if (result is null)
                 return NotFound();
-
             return Ok(result);
         }
 
@@ -35,7 +34,6 @@ namespace TimeTable.Controllers
 
             if (result is null)
                 return NotFound();
-
             return Ok(result);
         }
 
@@ -71,8 +69,7 @@ namespace TimeTable.Controllers
             var result = await _lessonService.AddWithRepeats(lesson, days, startPeriod, endPeriod);
             if (result != Array.Empty<Guid>())
                 return Ok(result);
-            else
-                return BadRequest(result);
+            return BadRequest(result);
         }
         [HttpPut("{id}")]
         public async Task<ActionResult<IdResponse>> Update(Guid id, string? subject, Guid? userId, string? className, Guid? taskId, DateOnly? date, TimeOnly? startTime, TimeOnly? endtime)
@@ -80,7 +77,6 @@ namespace TimeTable.Controllers
             var result = await _lessonService.Update(id, subject, userId, className, taskId, date, startTime, endtime);
             if (result.IsSuccess == true)
                 return Ok(result);
-
             return BadRequest(result);
         }
         [HttpDelete("{id}")]
@@ -90,7 +86,6 @@ namespace TimeTable.Controllers
 
             if (result == Guid.Empty)
                 return NotFound();
-
             return Ok(result);
         }
     }
