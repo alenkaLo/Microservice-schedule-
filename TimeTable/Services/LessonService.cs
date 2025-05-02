@@ -59,9 +59,27 @@ namespace TimeTable.Services
         {
             return await _lessonRepository.Delete(id);
         }
-        public async Task<Guid> Update(Guid id, string? subject, Guid? userId, string? className, Guid? taskId, DateOnly? date, TimeOnly? startTime, TimeOnly? endtime)
+        public async Task<IdResponse> Update(Guid id, string? subject, Guid? userId, string? className, Guid? taskId, DateOnly? date, TimeOnly? startTime, TimeOnly? endTime)
         {
-            return await _lessonRepository.Update(id, subject, userId, className, taskId, date, startTime, endtime);
+
+            var lesson = Lesson.CreateAsync(_lessonRepository,id, subject, userId, className, taskId, date, startTime, endTime).Result;
+            try
+            {
+                var checkResult = await CanCreateOrUpdateLessonAsync(lesson, false);
+                if (!checkResult.IsSuccess)
+                {
+                    return IdResponse.Failure(
+                        $"Невозможно обновить урок. {checkResult.ErrorMessage}");
+                }
+
+                await _lessonRepository.Update(id ,subject, userId, className ,taskId, date, startTime, endTime);
+
+                return IdResponse.Success(lesson.Id);
+            }
+            catch (Exception ex)
+            {
+                return IdResponse.Failure("Ошибка при обновлении урока");
+            }
         }
         public async Task<List<Lesson>> GetAllForPeriod(TimeOnly startTime, TimeOnly endTime, DateOnly startDate, DateOnly endDate)
         {

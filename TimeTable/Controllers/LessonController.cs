@@ -54,7 +54,7 @@ namespace TimeTable.Controllers
             if (result.IsSuccess == true)
                 return Ok(result);
 
-            return BadRequest();
+            return BadRequest(result);
 
         }
 
@@ -78,10 +78,10 @@ namespace TimeTable.Controllers
         public async Task<ActionResult<IdResponse>> Update(Guid id, string? subject, Guid? userId, string? className, Guid? taskId, DateOnly? date, TimeOnly? startTime, TimeOnly? endtime)
         {
             var result = await _lessonService.Update(id, subject, userId, className, taskId, date, startTime, endtime);
-            if (result == Guid.Empty)
-                return NotFound();
+            if (result.IsSuccess == true)
+                return Ok(result);
 
-            return Ok(result);
+            return BadRequest(result);
         }
         [HttpDelete("{id}")]
         public async Task<ActionResult<IdResponse>> Delete(Guid id)
