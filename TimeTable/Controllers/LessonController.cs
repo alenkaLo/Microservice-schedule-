@@ -51,8 +51,7 @@ namespace TimeTable.Controllers
             var result = await _lessonService.Add(lesson);
             if (result.IsSuccess == true)
                 return Ok(result);
-            else
-                return BadRequest();
+            return BadRequest(result);
 
         }
 
